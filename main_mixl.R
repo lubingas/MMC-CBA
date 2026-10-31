@@ -74,6 +74,8 @@ cl_res <- data.frame(model = base_case$model, method = "conditional logit",
                      row.names = NULL)
 mixl_table <- bindFill(list(cl_res, mixl_res))
 write.csv(mixl_table, "output/mixl_results.csv", row.names = FALSE)
+write.csv(data.frame(est_draws = EST_DRAWS, est_seed = EST_SEED, sim_men = SIM_MEN, kr_sims = KR_SIMS),
+          "output/mixl_settings.csv", row.names = FALSE)
 
 show <- function(t, digits = 2) print(format(t, digits = digits, nsmall = digits), row.names = FALSE)
 cat("\nPer uncircumcised man (2017 US$); mixed logits averaged over the posterior distributions\n")

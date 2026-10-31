@@ -301,4 +301,167 @@ gp <- ggplot(plane, aes(x = cost, y = cv, colour = policy)) +
   theme_paper + theme(panel.grid.major.y = element_line(colour = "grey92"))
 save_pdf(gp, "fig_bc_plane.pdf", 5.6, 5.4)
 
+
+### mixed logits
+# main_mixl.R must have been run on the estimates at MIXL_DRAWS draws; this reads its outputs
+if (!file.exists("output/mixl_results.csv")) stop("Run main_mixl.R first (it writes output/mixl_results.csv)")
+mxs <- if (file.exists("output/mixl_settings.csv")) read.csv("output/mixl_settings.csv") else
+  data.frame(est_draws = 3000, est_seed = 1, sim_men = 2000, kr_sims = 200)
+MIXL_DRAWS <- mxs$est_draws
+mx <- read.csv("output/mixl_results.csv")
+fitsum <- read.csv(sprintf("estimation/output/fit_summary_R%d_seed1.csv", MIXL_DRAWS))
+specs  <- c(Fixed = "mixl_one_price_slope_fixed", Logn = "mixl_one_price_slope_lognormal", Cens = "mixl_one_price_slope_censored")
+specs3 <- setNames(sub("one_price_slope", "three_price_slopes", specs), names(specs))
+spec_lab <- c(Fixed = "Price fixed", Logn = "Price lognormal", Cens = "Price censored at zero")
+mxd <- lapply(specs, function(m) read.csv(sprintf("estimation/output/%s_R%d_seed1_distribution.csv", m, MIXL_DRAWS)))
+mxr <- function(m, id) mx[mx$model == m & mx$policy == id, ]
+fs  <- function(m) fitsum[fitsum$model == m, ]
+co  <- function(d, v, what) d[d$coefficient == v, what]
+dol <- function(x, d = 2) usd(x, d)
+
+# numbers quoted in the text
+mac("MXdraws", format(MIXL_DRAWS, big.mark = ","))
+mac("MXsimMen", format(mxs$sim_men, big.mark = ",")); mac("MXkr", format(mxs$kr_sims, big.mark = ","))
+mac("MXstarts", max(fs(specs[["Fixed"]])$starts, 1))
+for (sp in names(specs)) {
+  f <- fs(specs[[sp]]); f3 <- fs(specs3[[sp]])
+  mac(paste0("MXll", sp), num(f$LL, 1)); mac(paste0("MXbic", sp), num(f$BIC, 1))
+  mac(paste0("MXgain", sp), num(f$LL_gain_over_CL, 0))
+  mac(paste0("MXllThree", sp), num(f3$LL, 1)); mac(paste0("MXbicThree", sp), num(f3$BIC, 1))
+}
+mac("MXgainPrice", num(fs(specs[["Logn"]])$LL - fs(specs[["Fixed"]])$LL, 0))
+dF <- mxd$Fixed; dL <- mxd$Logn; dC <- mxd$Cens
+mac("MXpriceFixed", num(co(dF, "price", "mean"), 4))
+mac("MXscale", num(co(dF, "price", "mean") / m1$beta[["price"]], 1))
+mac("MXneitherSD", num(co(dF, "neither", "sd"), 2))
+mac("MXpermhcMean", num(co(dF, "permhc", "mean"), 2)); mac("MXpermhcSD", num(co(dF, "permhc", "sd"), 2))
+mac("MXdeviceMean", num(co(dF, "device", "mean"), 2)); mac("MXdeviceSD", num(co(dF, "device", "sd"), 2))
+mac("MXdeviceLike", pct(pnorm(co(dF, "device", "mean") / co(dF, "device", "sd"))))
+mac("MXcashMean", num(co(dF, "cash", "mean"), 2)); mac("MXcashSD", num(co(dF, "cash", "sd"), 2))
+mac("MXlognMedian", num(co(dL, "price", "median"), 4)); mac("MXlognMean", num(co(dL, "price", "mean"), 4))
+mac("MXlognRatio", num(co(dL, "price", "mean") / co(dL, "price", "median"), 1))
+mac("MXcensZero", pct(co(dC, "price", "share_zero")))
+
+fx <- mx[mx$model == specs[["Fixed"]], ]; cl <- mx[mx$model == "cl_one_price_slope", ]
+fx <- fx[match(ids, fx$policy), ]; cl <- cl[match(ids, cl$policy), ]
+for (i in seq_along(ids)) {
+  id <- ids[i]; w <- paste0("MXP", words[i]); r <- fx[i, ]
+  mac(paste0(w, "Uptake"), formatC(100 * r$uptake, format = "f", digits = 1))
+  mac(paste0(w, "CV"), dol(r$cv_mean)); mac(paste0(w, "CVlo"), dol(r$cv_mean_lo)); mac(paste0(w, "CVhi"), dol(r$cv_mean_hi))
+  mac(paste0(w, "CVmed"), dol(r$cv_median)); mac(paste0(w, "Cost"), dol(r$total_cost))
+  mac(paste0(w, "NB"), dol(r$nb_mean)); mac(paste0(w, "NBlo"), dol(r$nb_mean_lo)); mac(paste0(w, "NBhi"), dol(r$nb_mean_hi))
+  mac(paste0(w, "Gain"), pct(r$share_cv_above_cost)); mac(paste0(w, "NBtotal"), dol(r$nb_total_mean))
+  mac(paste0(w, "PlugFixed"), dol(r$cv_plugin_mean))
+  for (sp in c("Logn", "Cens")) {
+    rs <- mxr(specs[[sp]], id)
+    mac(paste0(w, "CV", sp), dol(rs$cv_mean, 0)); mac(paste0(w, "CVmed", sp), dol(rs$cv_median))
+    mac(paste0(w, "Plug", sp), dol(rs$cv_plugin_mean)); mac(paste0(w, "Gain", sp), pct(rs$share_cv_above_cost))
+    mac(paste0(w, "CVlo", sp), dol(rs$cv_mean_lo, 0)); mac(paste0(w, "CVhi", sp), dol(rs$cv_mean_hi, 0))
+  }
+}
+udiff <- 100 * (cl$uptake - fx$uptake)
+mac("MXuptakeDiffMin", formatC(min(udiff), format = "f", digits = 0)); mac("MXuptakeDiffMax", formatC(max(udiff), format = "f", digits = 0))
+mac("MXtxDrop", pct(1 - fx$tx_savings[5] / cl$tx_savings[5]))
+mac("MXgainMin", pct(min(fx$share_cv_above_cost))); mac("MXgainMax", pct(max(fx$share_cv_above_cost)))
+med5 <- sapply(specs, function(m) mxr(m, ids[5])$cv_median)
+mac("MXmedFiveMin", dol(min(med5))); mac("MXmedFiveMax", dol(max(med5)))
+mac("MXpopDiff", pct(max(abs(fx$population_cv_mean / fx$cv_mean - 1))))
+writeLines(sprintf("\\newcommand{\\mmc%s}{%s}", names(macros), unlist(macros)), "paper/numbers.tex")
+
+# tables
+mlabel <- function(m) {
+  pr <- if (grepl("three", m)) "Three" else "One"
+  dist <- if (startsWith(m, "cl_")) "--" else c(fixed = "Fixed", lognormal = "Lognormal", censored = "Censored at zero")[[sub(".*_", "", m)]]
+  c(if (startsWith(m, "cl_")) "Conditional logit" else "Mixed logit", pr, dist)
+}
+fit_rows <- lapply(c("cl_one_price_slope", specs, "cl_three_price_slopes", specs3), function(m) {
+  f <- fs(m); c(mlabel(m), num(f$LL, 1), f$parameters, num(f$AIC, 1), num(f$BIC, 1))
+})
+fit_rows[[4]][length(fit_rows[[4]])] <- paste0(fit_rows[[4]][length(fit_rows[[4]])], " \\\\ \\midrule %")
+write.tab("tab_mixl_fit.tex", c("Model", "\\makecell{Price\\\\coefficients}", "\\makecell{Distribution of\\\\the price coefficient}",
+                                "Log-likelihood", "Parameters", "AIC", "BIC"), fit_rows, "lllrrrr")
+
+cellmx <- function(d, v, what, dg) {
+  e <- co(d, v, what); se <- co(d, v, paste0(what, "_robse"))
+  if (what == "sd" && d$distribution[d$coefficient == v] == "fixed") return("--")
+  two(num(e, dg), paste0("(", num(se, dg), ")"))
+}
+coef_rows1 <- Filter(function(r) r[1] %in% dF$coefficient, coef_rows)
+mx_rows <- lapply(coef_rows1, function(r) {
+  dg <- if (r[1] == "price") 4 else 3
+  c(r[2], unlist(lapply(mxd, function(d) c(cellmx(d, r[1], "mean", dg), cellmx(d, r[1], "sd", dg)))))
+})
+write.tab("tab_mixl_coef.tex", c("Attribute", rep(c("Mean", "SD"), 3)), mx_rows, "lcccccc",
+          pre = c(paste0("& ", paste(sprintf("\\multicolumn{2}{c}{%s}", spec_lab), collapse = " & "), " \\\\"),
+                  "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\\cmidrule(lr){6-7}"),
+          post = c("\\midrule",
+                   sprintf("Price, median & \\multicolumn{2}{c}{%s} & \\multicolumn{2}{c}{%s} & \\multicolumn{2}{c}{%s} \\\\",
+                           num(co(dF, "price", "median"), 4), num(co(dL, "price", "median"), 4), num(co(dC, "price", "median"), 4)),
+                   sprintf("Share of men with a price coefficient of zero & \\multicolumn{2}{c}{--} & \\multicolumn{2}{c}{--} & \\multicolumn{2}{c}{%s} \\\\",
+                           pct(co(dC, "price", "share_zero"))),
+                   sprintf("Log-likelihood & \\multicolumn{2}{c}{%s} & \\multicolumn{2}{c}{%s} & \\multicolumn{2}{c}{%s} \\\\",
+                           num(fs(specs[["Fixed"]])$LL, 1), num(fs(specs[["Logn"]])$LL, 1), num(fs(specs[["Cens"]])$LL, 1))))
+
+bca_rows <- lapply(seq_along(ids), function(i) {
+  r <- fx[i, ]
+  c(esc(pol$label[pol$policy == ids[i]]),
+    two(pct(r$uptake, 1), paste0("(+", formatC(100 * r$uptake_change, format = "f", digits = 1), ")")),
+    two(dol(r$cv_mean), ci(r$cv_mean_lo, r$cv_mean_hi)), dol(r$cv_median), dol(r$total_cost),
+    two(dol(r$nb_mean), ci(r$nb_mean_lo, r$nb_mean_hi)),
+    two(pct(r$share_cv_above_cost), paste0("(", pct(r$share_cv_above_cost_lo), ", ", pct(r$share_cv_above_cost_hi), ")")),
+    two(dol(r$nb_total_mean), ci(r$nb_total_mean_lo, r$nb_total_mean_hi)))
+})
+write.tab("tab_mixl_bca.tex",
+          c("Policy", "\\makecell{Uptake\\\\(change)}", "\\makecell{Mean CV\\\\(95\\% CI)}", "\\makecell{Median\\\\CV}",
+            "\\makecell{Incremental\\\\cost}", "\\makecell{Mean CV $-$ cost\\\\(95\\% CI)}", "\\makecell{Men with\\\\CV $>$ cost}",
+            "\\makecell{Net benefit with\\\\averted ART costs}"),
+          bca_rows, ">{\\raggedright\\arraybackslash}p{2.7cm}ccccccc")
+
+price_rows <- lapply(seq_along(ids), function(i) {
+  id <- ids[i]; rF <- fx[i, ]; rL <- mxr(specs[["Logn"]], id); rC <- mxr(specs[["Cens"]], id)
+  c(esc(pol$label[pol$policy == id]), dol(cl$cv_mean[i]), dol(rF$cv_mean), dol(rF$cv_median),
+    dol(rL$cv_mean, 0), dol(rL$cv_median), dol(rL$cv_plugin_mean), dol(rC$cv_mean), dol(rC$cv_median))
+})
+write.tab("tab_mixl_price.tex", c("Policy", "CV", "Mean", "Median", "Mean", "Median", "\\makecell{Plug-in\\\\(2018)}", "Mean", "Median"),
+          price_rows, ">{\\raggedright\\arraybackslash}p{2.7cm}cccccccc",
+          pre = c("& \\makecell{Conditional\\\\logit} & \\multicolumn{2}{c}{Price fixed} & \\multicolumn{3}{c}{Price lognormal} & \\multicolumn{2}{c}{Price censored at zero} \\\\",
+                  "\\cmidrule(lr){3-4}\\cmidrule(lr){5-7}\\cmidrule(lr){8-9}"))
+
+# figures
+ord <- rev(ids)
+f4 <- do.call(rbind, lapply(names(specs), function(sp) {
+  r <- mx[mx$model == specs[[sp]], ]; r <- r[match(ids, r$policy), ]
+  rbind(data.frame(spec = sp, policy = ids, what = "Mean CV", value = r$cv_mean),
+        data.frame(spec = sp, policy = ids, what = "Median CV", value = r$cv_median),
+        data.frame(spec = sp, policy = ids, what = "Conditional logit CV", value = cl$cv_mean),
+        data.frame(spec = sp, policy = ids, what = "Incremental cost", value = r$total_cost))
+}))
+f4$spec <- factor(spec_lab[f4$spec], levels = spec_lab)
+f4$policy <- factor(f4$policy, levels = ord, labels = setNames(pol$label, pol$policy)[ord])
+f4$what <- factor(f4$what, levels = c("Mean CV", "Median CV", "Conditional logit CV", "Incremental cost"))
+gm <- ggplot(f4, aes(x = value, y = policy, colour = what, shape = what)) +
+  geom_point(size = 2, stroke = 0.9) +
+  facet_wrap(~spec, ncol = 1) +
+  scale_x_log10(labels = label_dollar(), breaks = c(0.1, 1, 10, 100, 1000)) +
+  scale_colour_manual(values = unname(okabe[c("blue", "blue", "orange", "vermillion")]), name = NULL) +
+  scale_shape_manual(values = c(16, 1, 4, 124), name = NULL) +
+  labs(x = "US$ per uncircumcised man (2017), log scale", y = NULL) +
+  theme_paper + theme(strip.text = element_text(hjust = 0, face = "bold"), panel.grid.major.y = element_line(colour = "grey92"))
+save_pdf(gm, "fig_mixl_cv.pdf", 6.4, 6.2)
+
+f5 <- do.call(rbind, lapply(names(specs), function(sp) {
+  r <- mx[mx$model == specs[[sp]], ]; r <- r[match(ids, r$policy), ]
+  data.frame(spec = sp, policy = ids, share = r$share_cv_above_cost)
+}))
+f5$spec <- factor(spec_lab[f5$spec], levels = spec_lab)
+f5$policy <- factor(f5$policy, levels = ord, labels = setNames(pol$label, pol$policy)[ord])
+gs <- ggplot(f5, aes(x = share, y = policy, fill = spec)) +
+  geom_col(position = position_dodge(width = 0.78), width = 0.72) +
+  geom_vline(xintercept = 0.5, colour = "grey40", linetype = "dashed", linewidth = 0.4) +
+  scale_x_continuous(labels = label_percent(), limits = c(0, 1), expand = expansion(mult = c(0, 0.02))) +
+  scale_fill_manual(values = unname(okabe[c("blue", "orange", "green")]), name = NULL, breaks = spec_lab) +
+  labs(x = "Share of men whose CV exceeds the incremental cost per man", y = NULL) +
+  theme_paper
+save_pdf(gs, "fig_mixl_share.pdf", 6.4, 3.6)
+
 cat("Paper tables, figures and numbers written.\n")
