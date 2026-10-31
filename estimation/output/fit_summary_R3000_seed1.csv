@@ -1,0 +1,9 @@
+"model","draws","seed","LL","parameters","AIC","BIC","LL_gain_over_CL","max_gradient","converged","hessian_ok","minutes"
+"cl_one_price_slope",NA,NA,-3703.301,11,7428.6,7500,0,2.9e-05,TRUE,TRUE,0
+"cl_three_price_slopes",NA,NA,-3703.081,13,7432.2,7516.5,0,6.9e-06,TRUE,TRUE,0
+"mixl_one_price_slope_fixed",3000,1,-2721.49,21,5485,5621.3,981.811,4e-04,TRUE,TRUE,0.7
+"mixl_one_price_slope_lognormal",3000,1,-2683.841,22,5411.7,5554.5,1019.46,1e-04,TRUE,TRUE,1.7
+"mixl_one_price_slope_censored",3000,1,-2685.303,22,5414.6,5557.4,1017.998,1.7e-05,TRUE,TRUE,3
+"mixl_three_price_slopes_fixed",3000,1,-2721.766,23,5489.5,5638.8,981.314,0.0029,TRUE,TRUE,0.8
+"mixl_three_price_slopes_lognormal",3000,1,-2688.638,26,5429.3,5598,1014.443,2.1e-05,TRUE,TRUE,2.3
+"mixl_three_price_slopes_censored",3000,1,-2692.846,26,5437.7,5606.5,1010.235,0.0028,TRUE,TRUE,2.9

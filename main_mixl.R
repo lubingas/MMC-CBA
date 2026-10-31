@@ -21,7 +21,7 @@ inputs <- read_inputs()
 base_case <- RunCBA(inputs)                   # the conditional logit, for comparison
 
 # which estimation run to use (estimation/output/<model>_R<draws>_seed<seed>_*)
-EST_DRAWS <- 1000
+EST_DRAWS <- 3000
 EST_SEED  <- 1
 SIM_MEN   <- 2000                             # simulated men in the benefit-cost analysis
 KR_SIMS   <- 200                              # Krinsky-Robb draws (one price coefficient only)
