@@ -6,6 +6,8 @@ This is the model behind the working paper:
 
 > Lubinga SJ, Babigumira JB, Graham SM, Mukose AD, Garrison LP Jr, Basu A. Preferences for medical male circumcision services and the benefits and costs of alternative service delivery policies: a discrete choice experiment among uncircumcised men in Uganda. Working paper, updated draft October 2026 (first version April 2018). [PDF](www/working_paper.pdf)
 
+**Live app:** https://theejonslo.shinyapps.io/mmc-cba/
+
 **Status:** illustrative. The preference estimates are from the 2017 DCE; the costs come from published studies in other parts of Uganda; several of the treatment-cost inputs are assumptions.
 
 The benefit of each policy is its compensating variation (CV), the log-sum measure of Small and Rosen, from a conditional logit model calibrated to the observed share of uncircumcised men. The CV is set against the incremental cost of providing the services, including incentive payments, and then against the HIV treatment costs averted by additional circumcisions. The methods are in section 2 of the working paper.
@@ -133,3 +135,7 @@ shiny::runApp()
 ```
 
 Shiny loads the files in `R/` before `app.R`. The app's fonts are Atkinson Hyperlegible Next and Mono (SIL Open Font License, `www/fonts/OFL.txt`).
+
+## License
+
+MIT (`LICENSE`).

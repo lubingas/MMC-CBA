@@ -23,6 +23,7 @@
 \usepackage[super,sort&compress,comma]{natbib}
 \usepackage[font={sf,small},labelfont=bf,labelsep=period,singlelinecheck=false]{caption}
 \usepackage[colorlinks=true,linkcolor=secred,citecolor=secred,urlcolor=secred]{hyperref}
+\usepackage{xurl}                  % URLs may break at any character
 \linespread{1.12}
 \setlength{\parindent}{10pt}\setlength{\parskip}{2pt}
 \frenchspacing \widowpenalty=10000 \clubpenalty=10000
@@ -37,7 +38,7 @@
 \title{{\slabfont Preferences for medical male circumcision services and the benefits and costs of alternative service delivery policies: a discrete choice experiment among uncircumcised men in Uganda}}
 \author{\textsf{Solomon J. Lubinga, Joseph B. Babigumira, Susan M. Graham,}\\
   \textsf{Aggrey D. Mukose, Louis P. Garrison Jr, Anirban Basu}\\[0.4em]
-  \small\textsf{Working paper \textperiodcentered{} updated draft, 31 October 2026 (first version April 2018) \textperiodcentered{} not for circulation}}
+  \small\textsf{Working paper \textperiodcentered{} updated draft, 31 October 2026 (first version April 2018)}}
 \date{}
 
 \begin{document}
@@ -192,7 +193,7 @@ x = a + (b - a)\,Z, \qquad Z \sim \text{Beta}\Big(1 + 4\,\frac{m - a}{b - a},\; 
 where $a$, $m$ and $b$ are the low, base and high values. In one-way sensitivity analyses, each input was set to its low and then its high value while all other inputs were held at the base case: costs to the ranges in Table~\ref{tab:costs}, utility parameters to their 95\% confidence limits, and the calibration share to 60\% and 80\%. We also examined scenarios with the three price coefficients, without calibration, and with incentives valued only at their money value.
 
 \subsection{Software}
-The model was implemented in R. Utility parameters were estimated in 2018 with the CMC choice modelling code for R, and re-estimated with an R implementation using the \textsf{torch} library, which reproduces them. An interactive application runs the same model and allows all inputs to be changed. The choice data needed to estimate the conditional logit models (the choices and the experimental design, with no other information about respondents), the code and the application are available at \url{https://github.com/lubingas/MMC-CBA}.
+The model was implemented in R. Utility parameters were estimated in 2018 with the CMC choice modelling code for R, and re-estimated with an R implementation using the \textsf{torch} library, which reproduces them. An interactive application (\url{https://theejonslo.shinyapps.io/mmc-cba/}) runs the same model and allows all inputs to be changed. The choice data needed to estimate the conditional logit models (the choices and the experimental design, with no other information about respondents), the code and the application are available at \url{https://github.com/lubingas/MMC-CBA}.
 
 
 \section{Results}
