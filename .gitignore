@@ -17,3 +17,7 @@ paper/*.toc
 paper/*.synctex.gz
 paper/fonts.tex
 paper/workingpaper.pdf
+
+# torch fits (reloaded by estimation/mmc_torch.R) and run logs
+estimation/output/fits/
+estimation/output/*.log

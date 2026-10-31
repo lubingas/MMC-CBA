@@ -12,7 +12,7 @@ This is the model behind the working paper:
 
 The benefit of each policy is its compensating variation (CV), the log-sum measure of Small and Rosen, from a conditional logit model calibrated to the observed share of uncircumcised men. The CV is set against the incremental cost of providing the services, including incentive payments, and then against the HIV treatment costs averted by additional circumcisions. The methods are in section 2 of the working paper.
 
-The preferences come from the 2017 DCE with 406 uncircumcised, HIV-negative men aged 18–45 in Ntenjeru sub-county. Two conditional logits were estimated with CMC in 2018, and `estimation/mmc_torch_cl.R` re-estimates both from the choice data in this repository:
+The preferences come from the 2017 DCE with 406 uncircumcised, HIV-negative men aged 18–45 in Ntenjeru sub-county. Two conditional logits were estimated with CMC in 2018, and `estimation/mmc_torch.R` re-estimates both from the choice data in this repository:
 
 | Model | Price coefficients | Log-likelihood | Source |
 |---|---|---|---|
@@ -26,7 +26,7 @@ The three price coefficients are not different from each other (likelihood ratio
 | Path | What it is |
 |---|---|
 | `data/dce/` | The choice data the conditional logit needs, and nothing else: each man's 12 choices (`choices.csv`) and the attributes of the service options in each block and task (`design.csv`) |
-| `estimation/mmc_torch_cl.R` | Estimates both conditional logits from `data/dce/` with R torch and checks them against the 2018 CMC runs |
+| `estimation/mmc_torch.R` | Estimates the conditional logits (checked against the 2018 CMC runs) and uncorrelated mixed logits from `data/dce/` with R torch |
 | `data/cba_inputs.xlsx` | All inputs: settings, service options, policies, costs, both models' estimates and robust covariance matrices, US CPI |
 | `data-raw/make_inputs.R` | How the spreadsheet was first built. Edit the spreadsheet, not this script |
 | `data-raw/estimates/` | The 2018 CMC estimation outputs, unchanged |
@@ -45,10 +45,14 @@ The three price coefficients are not different from each other (likelihood ratio
 install.packages("torch"); torch::install_torch()   # once
 ```
 ```bash
-Rscript estimation/mmc_torch_cl.R
+Rscript estimation/mmc_torch.R                     # every model, 1000 draws, seed 1
+Rscript estimation/mmc_torch.R models=cl           # the conditional logits only
+Rscript estimation/mmc_torch.R draws=3000 seed=1   # mixed logits on more draws
 ```
 
-This fits both models, writes their estimates and robust covariance matrices to `estimation/output/` in the layout of the CMC outputs, and compares them with the 2018 CMC runs. Both reproduce CMC: log-likelihoods of −3703.301 and −3703.081, and estimates and robust standard errors equal to CMC's at its four reported decimals. The output of that run is in `estimation/output/`. The likelihood is written per man, so latent class and mixed logit models can be added as other likelihood functions.
+The conditional logits reproduce CMC: log-likelihoods of −3703.301 and −3703.081, and estimates and robust standard errors equal to CMC's at its four reported decimals.
+
+The mixed logits have independent normal coefficients, with one price coefficient or three, and the price coefficients either fixed (the same marginal utility of income for every man), lognormal (negative for every man) or censored at zero. Draws, start values and the likelihood follow the MMC-Demand torch code. Each fit writes its estimates, robust covariance matrix and the distribution of each coefficient across men to `estimation/output/`, and is saved in `estimation/output/fits/` so a rerun only fits what is new. The likelihood is written per man, so latent class and correlated mixed logit models are another likelihood function.
 
 ## Policies
 
