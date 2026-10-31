@@ -2,6 +2,7 @@ data-raw/
 output/
 README.md
 main.R
+main_mixl.R
 MMC-CBA.Rproj
 paper/
 estimation/

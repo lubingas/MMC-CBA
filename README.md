@@ -34,6 +34,7 @@ The three price coefficients are not different from each other (likelihood ratio
 | `R/data_input.R` | Reads the spreadsheet into one list |
 | `R/00_packages.R` | Loads the packages the model uses |
 | `main.R` | Runs the base case, Krinsky-Robb, PSA, one-way analyses and scenarios, and writes tables and figures to `output/` |
+| `R/mixl.R`, `main_mixl.R` | The benefit-cost analysis with the mixed logits: each man's CV averaged over his posterior distribution, mean and median, with Krinsky-Robb intervals; tables and figures to `output/mixl_*` |
 | `paper/` | The working paper: LaTeX source, the script that writes its tables, figures and numbers, and the build script |
 | `app.R`, `app/`, `www/` | The Shiny app: page layout and server (`app.R`), helpers, charts and input editors (`app/`), styles, fonts, icon and the working paper PDF (`www/`) |
 
