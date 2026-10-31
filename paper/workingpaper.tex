@@ -1,0 +1,366 @@
+% !TeX program = XeLaTeX
+% Working paper: benefit-cost analysis of MMC service delivery policies.
+% Updates workingpaper10 (April 2018). Tables, figures and the numbers in the
+% text (numbers.tex) are written by paper/make_paper.R from the model the app runs.
+% Build: bash paper/build.sh draft   (or mac, on the Mac only)
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1.05in]{geometry}
+\usepackage{amsthm}
+\usepackage{amsmath,amssymb}
+\usepackage[no-math]{fontspec}
+\usepackage{mathspec}
+\input{fonts}                      % fonts_mac.tex or fonts_draft.tex, copied to fonts.tex
+\usepackage{xcolor}
+\definecolor{secred}{RGB}{158,24,24}            % heading and link colour
+% Okabe-Ito palette for figures and boxes
+\definecolor{OIorange}{HTML}{E69F00}\definecolor{OIsky}{HTML}{56B4E9}
+\definecolor{OIgreen}{HTML}{009E73}\definecolor{OIyellow}{HTML}{F0E442}
+\definecolor{OIblue}{HTML}{0072B2}\definecolor{OIverm}{HTML}{D55E00}
+\definecolor{OIpurple}{HTML}{CC79A7}\definecolor{OIgrey}{HTML}{999999}
+\usepackage{graphicx,booktabs,array,tabularx,enumitem,titlesec,float,microtype}
+\usepackage{threeparttable,multirow,makecell,adjustbox}
+\usepackage[section]{placeins}
+\usepackage[super,sort&compress,comma]{natbib}
+\usepackage[font={sf,small},labelfont=bf,labelsep=period,singlelinecheck=false]{caption}
+\usepackage[colorlinks=true,linkcolor=secred,citecolor=secred,urlcolor=secred]{hyperref}
+\linespread{1.12}
+\setlength{\parindent}{10pt}\setlength{\parskip}{2pt}
+\frenchspacing \widowpenalty=10000 \clubpenalty=10000
+\titleformat{\section}{\color{secred}\Large\scshape}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\color{secred}\large\scshape}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}{\itshape}{\thesubsubsection}{0.8em}{}
+\numberwithin{equation}{section}\numberwithin{figure}{section}\numberwithin{table}{section}
+\renewcommand{\cellalign}{cc}
+
+\input{numbers}                    % numbers quoted in the text, from make_paper.R
+
+\title{{\slabfont Preferences for medical male circumcision services and the benefits and costs of alternative service delivery policies: a discrete choice experiment among uncircumcised men in Uganda}}
+\author{\textsf{Solomon J. Lubinga, Joseph B. Babigumira, Susan M. Graham,}\\
+  \textsf{Aggrey D. Mukose, Louis P. Garrison Jr, Anirban Basu}\\[0.4em]
+  \small\textsf{Working paper \textperiodcentered{} updated draft, 31 October 2026 (first version April 2018) \textperiodcentered{} not for circulation}}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{plain}
+
+\begin{abstract}
+\noindent Medical Male Circumcision (MMC) is a cost-effective strategy for prevention of HIV transmission if uptake can be increased. Discrete choice experiments (DCEs) are increasingly used to study the demand for health services, but their potential to value policy options in monetary terms, and hence to provide the benefit side of a formal benefit-cost analysis, is rarely realized. We conducted a DCE among 406 self-reported uncircumcised, HIV-negative men between 18--45 years-old in a high-HIV prevalence fishing community in Uganda. We estimated a conditional logit model, calibrated it to the observed share of uncircumcised men, and computed the compensating variation (CV) for five service delivery policies relative to an initial state in which surgical MMC services were only available at permanent health facilities. We compared the CV with the incremental cost of providing the services, including incentive payments, and with the HIV treatment costs averted by additional circumcisions. Cash incentives for device and surgical circumcision at permanent health facilities, combined with outreach services, had the highest predicted uptake (\mmcPFiveUptake\%) and the highest CV (\mmcPFiveCV{} per uncircumcised man; 95\% CI \mmcPFiveCVlo{} to \mmcPFiveCVhi). For every policy, the CV was within \$2.50 of the incremental cost; the CV of outreach services was lower than their cost in most simulations. Including the averted HIV treatment costs (\$\mmctxPerMMC{} per additional circumcision), all policies had positive net benefits, the highest for cash incentives with outreach services (\mmcPFiveNBtotal{} per uncircumcised man). The precision of the CV depended on the specification of price: a single price coefficient, preferred by a likelihood ratio test and information criteria, narrowed the CV intervals about five-fold compared with separate coefficients for out-of-pocket and incentive payments. Choice experiments can provide the benefit side of a formal benefit-cost analysis of MMC demand creation strategies, provided the marginal utility of income is precisely estimated and the model is calibrated to observed uptake.
+\end{abstract}
+
+{\small\textbf{Keywords:} Medical Male Circumcision; Discrete choice experiment; Compensating variation; Benefit-cost analysis \\
+\textbf{JEL Codes:} C35; D61; I12; I18}
+
+
+\section{Introduction}
+Medical Male Circumcision (MMC) of adolescent boys and men is an effective intervention for the prevention of female-to-male HIV transmission.\cite{RN16} Njeuhmeli et al.,\cite{RN25} projected a potentially high return-on-investment from scaling-up MMC to 80\% coverage in 13 priority-countries in sub-Saharan Africa with high-HIV and low-circumcision prevalence. In 2011, the WHO/UNAIDS set a target of performing 20.3 million circumcisions in the priority countries by 2016. However, by 2015, an estimated 11.7 million adolescent boys and men had been circumcised, representing 58\% of this target.\cite{RN94}
+
+Economic evaluations have shown that MMC is highly cost-effective when compared to no MMC,\cite{RN17,RN18,RN19,RN20,RN21} and a portfolio of biomedical HIV prevention interventions.\cite{RN23} However, qualitative studies have documented intangible (psychological and socio-cultural) costs that impede acceptability of circumcision,\cite{RN173} and are often not captured in economic evaluations. Quantitative studies have shown that demand for MMC is lower than projected in economic evaluations, is highly price elastic,\cite{RN29,RN33} and is concentrated among lower risk individuals.\cite{RN6} Supply-side interventions to increase uptake of MMC have centred around enhancing MMC service delivery, for instance through task-shifting, use of strategic campaign and outreach services, and the introduction of circumcision devices.\cite{RN255} Demand-side strategies have involved the use of financial and behavioural interventions to incentivize the utilization of MMC services.\cite{RN96}
+
+Discrete choice experiments (DCEs) are increasingly applied in resource-limited settings to value health interventions.\cite{RN287,RN75} They are advantageous over other economic valuation methods because of their ability to identify the characteristics of goods that influence choices,\cite{RN76} and are attractive in settings without readily available revealed preference data. They are also a potentially powerful tool to examine the monetary valuation of policy options for increasing uptake of MMC, and hence a framework for conducting economic evaluations using a benefit-cost framework. The welfare effects of a change in the services on offer can be measured by the compensating variation (CV), which, for the logit family of models, has a closed form.\cite{RN93,RN249} In practice, however, DCEs in health are mostly used to estimate marginal willingness-to-pay for attributes, and the CV is rarely set against the costs of the services that generate it.
+
+We designed a DCE to study the factors that influence the demand for MMC in Uganda. In an earlier version of this paper, we computed the CV for three service delivery policies. Here, we extend that analysis into a formal benefit-cost analysis. We compute the CV for five policies with a model calibrated to the observed uptake of MMC, compare it with the incremental costs of providing the services (including incentive payments) and with the HIV treatment costs averted by additional circumcisions, and characterize the uncertainty in the net benefit of each policy. The analysis is implemented in an interactive application that runs the same model.
+
+
+\section{Methods}
+\subsection{Study setting}
+The study was conducted in Mukono district, among predominantly fishing communities at landing sites on Lake Victoria, Uganda. The incidence and prevalence of HIV are higher in fishing communities compared to non-fishing communities.\cite{RN200,RN274} Residents of fishing communities exhibit a high-HIV-risk profile characterized by high rates of multiple sexual partnerships, alcohol consumption before sex, and non-marital sexual partnerships. The prevalence of circumcision among non-Muslim men in fishing communities is also lower than in non-fishing communities.\cite{RN274}
+
+\subsection{Selection of attributes and attribute-levels}
+We conducted qualitative interviews in August 2016 to develop a conceptual model of the demand for MMC, and initially identified 12 influential MMC service attributes. These were narrowed to focus on the most influential to MMC decisions, and the most relevant for MMC demand creation policy or intervention design. The final list of seven attributes and their levels included: (1) accessing MMC services at permanent versus temporary health facilities, (2) distance travelled to access MMC services (1 km, 5 km, 15 km), (3) number of week-days during which MMC services were available (1, 3 and 5 days), (4) privacy during counselling and waiting to get circumcised (complete, some, none), (5) device versus surgical circumcision, (6) incentives for getting circumcised (none, voucher and cash), and (7) price or monetary value of the incentive (a continuous variable with values $\geq 0$ indicating out-of-pocket payment and negative values indicating incentive payment) (Table~\ref{tab:attributes}).
+
+\begin{table}[!htbp]
+\centering
+\caption{Attributes, levels and coding in the choice experiment.}\label{tab:attributes}
+\small
+\begin{threeparttable}
+\begin{tabular}{>{\raggedright\arraybackslash}p{5.2cm}>{\raggedright\arraybackslash}p{4.6cm}ll}
+\toprule
+Attribute & Levels & Coding & Variable label \\
+\midrule
+Type of health facility\tnote{a} & Temporary (outreach); permanent (static) & Dummy & \emph{permhc} \\
+Distance (km) to health facility & 1 (reference), 5, 15 & Dummy & \emph{dist5}, \emph{dist15} \\
+Number of week-days on which circumcisions are performed & 1, 3, 5 & Linear & \emph{avail} \\
+Privacy during counselling and waiting & By yourself (reference); men within your age group; all age groups together & Dummy & \emph{somepriv}, \emph{notpriv} \\
+Method of circumcision & Surgery (reference); device & Dummy & \emph{device} \\
+Incentive & None (reference); voucher; cash & Dummy & \emph{voucher}, \emph{cash} \\
+Cost of procedure or amount of incentive payment (US\$)\tnote{b} & $-$12, $-$8, $-$4, 0, 4, 8 & Linear & \emph{price} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item[a] If temporary health facility, then distance was 1 or 5 km, and if permanent facility then distance was 5 or 15 km.
+\item[b] If incentive was none then price was $\geq 0$, and if voucher or cash then price was $< 0$ (an incentive payment).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Design of the discrete choice experiment}
+We used the pick one format because it was simple to implement, imposed a lower cognitive burden, and mimicked real-life decision-making.\cite{RN70} We used a design with two unlabelled alternatives (circumcision service options 1 and 2) and one labelled alternative, the opt-out (\emph{neither}) option (Figure~\ref{fig:choicetask}). This approach permitted the estimation of unconditional demand and enhanced the conceptual validity of our experiment given that MMC is voluntary. We generated a D-efficient design in \textsf{Ngene} v1.1.2,\cite{RN288} with design restrictions to enhance the plausibility of the choice scenarios.\cite{RN78} In February 2017, we conducted a pilot survey of 40 men and used the parameter estimates from a panel conditional logit model as Bayesian priors for the final design. The final design had 36 choice scenarios in 3 blocks of 12 choice tasks each.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/choice_task.png}
+\caption{An example of the choice task.}\label{fig:choicetask}
+\end{figure}
+
+\subsection{Survey procedures}
+The main survey was conducted between March and April 2017 in Ntenjeru sub-county in Mukono district, which is divided into nine parishes with 111 villages and has a population of about 40,000 people, approximately 50\% of whom are male.\cite{RN270} We randomly selected seven villages for the study and included self-reported heterosexual, uncircumcised, HIV-negative men aged between 18--45 years, who consented to the study. Trained research assistants administered the questionnaire, in Luganda, in private at respondents' homes or workplaces. Before the discrete choice experiment, we provided a verbal explanation of circumcision and a brief animated video describing the procedure of circumcision using devices, and asked respondents to assume all other attributes were the same across choice options. The study was approved by the Institutional Review Boards of the University of Washington and Mbarara University of Science and Technology, and cleared by the Uganda National Council for Science and Technology. All participants provided written consent.
+
+\subsection{Econometric model}
+The econometric framework follows random utility theory,\cite{RN87} in which utility is a latent construct composed of representative utility and stochastic utility (unobserved to the analyst). Respondent $n$ faced a choice among three alternatives, $j$, in 12 choice scenarios. The indirect utility function is
+\begin{equation}\label{eq:utility}
+U_{nj} = V_{j} + \epsilon_{nj} = x_{j}\boldsymbol{\beta} + \epsilon_{nj},
+\end{equation}
+where $\boldsymbol{\beta}$ is a vector of generic utility coefficients for the attributes $x_j$, and $\epsilon_{nj}$ is independent and identically Gumbel distributed. Individuals choose the alternative that maximizes their utility. The structural model of representative utility was
+\begin{align}
+V_{j\in\{1,2\}} &= \beta_{permhc} x_{permhc,j} + \beta_{dist5} x_{dist5,j} + \beta_{dist15} x_{dist15,j} + \beta_{avail} x_{avail,j} + \beta_{somepriv} x_{somepriv,j} \notag\\
+ &\quad + \beta_{notpriv} x_{notpriv,j} + \beta_{device} x_{device,j} + \beta_{voucher} x_{voucher,j} + \beta_{cash} x_{cash,j} + \beta_{price}\, x_{price,j}, \label{eq:structural}\\
+V_{3} &= \delta_{neither}. \notag
+\end{align}
+In the base case, a single price coefficient, $\beta_{price}$, applies to out-of-pocket and incentive payments, so that the negative of $\beta_{price}$ is the marginal utility of income, $\lambda$. We estimated this conditional logit (CL) model, which assumes that all individuals have the same vector of utilities, by maximum likelihood, accounting for the panel nature of the data with robust standard errors. In an alternative specification, we allowed the marginal utility of price to depend on whether the option was presented as an out-of-pocket payment, a voucher incentive or a cash incentive (three price coefficients). We compared the two specifications with a likelihood ratio test.
+
+\subsection{Policy scenarios}
+We examined the potential effects of five policy proposals for MMC demand creation. As was the predominant practice in the study area, the initial state was one in which surgical MMC services were only available at permanent health facilities. We then examined five post-policy states: (1) introduction of outreach services where circumcision was performed by surgical methods; (2) an option of device circumcision at permanent health facilities; (3) introduction of both outreach services and device circumcision; (4) providing cash incentives for device and surgical circumcision at permanent health facilities, assuming a cash incentive equivalent to US\$12 if circumcision was performed using a device, and US\$8 if circumcision was performed surgically; and (5) introduction of outreach services together with cash incentives for device and surgical circumcision at permanent health facilities. The opt-out option was available in both the initial and post-policy states, reflecting the voluntary nature of MMC. Tables~\ref{tab:options} and~\ref{tab:policies} describe the service options by the attributes in our choice experiment, and the options available in each policy.
+
+\begin{table}[!htbp]
+\centering
+\caption{Service options in the policy scenarios, by the attributes in the choice experiment.}\label{tab:options}
+\small
+\adjustbox{max width=\textwidth}{\input{tables/tab_options.tex}}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\caption{Service options available in each policy (the opt-out option is always available).}\label{tab:policies}
+\small
+\adjustbox{max width=\textwidth}{\input{tables/tab_policies.tex}}
+\end{table}
+
+\subsection{Calibration}
+The CL model predicts that \mmcuncalUptake\% of men would choose circumcision if surgical circumcision were only available at permanent health facilities, whereas about \mmcoptoutShare\% of men in the area remain uncircumcised. Following our earlier policy simulations, we added a constant, $\hat{a}$, to the utility of the opt-out option so that the model replicates the observed share of uncircumcised men, $S$, in the initial state, $S_0$:
+\begin{equation}\label{eq:calibration}
+\frac{e^{\delta_{neither} + \hat{a}}}{e^{\delta_{neither} + \hat{a}} + \sum_{k \in S_0 \setminus 0} e^{V_k}} = S
+\quad\Longrightarrow\quad
+\hat{a} = \operatorname{logit}(S) + \ln \sum_{k \in S_0 \setminus 0} e^{V_k} - \delta_{neither}.
+\end{equation}
+With $S = \mmcoptoutShare\%$, $\hat{a} = \mmcaHat$. The same constant applies to every policy. Predicted choice probabilities for the options in a policy, $S_1$, are then given by the logit function, $P_j(S_1) = e^{V_j}/\sum_{k \in S_1} e^{V_k}$.
+
+\subsection{Welfare measure: compensating variation}
+Welfare effects were estimated using the compensating variation (CV), a Hicksian measure of the welfare effects of policy changes. It provides a measure of the value, in monetary terms, associated with a change in policy. With utility linear in income, $U_{nj} = \lambda y_n + V_j + \epsilon_{nj}$, the expected maximum utility from a choice set $S$ is $\lambda y_n + \ln \sum_{j \in S} e^{V_j}$, up to a constant. The CV is the change in income that leaves an individual as well off after the policy change as before:
+\begin{equation}
+\lambda (y_n - CV) + \ln \sum_{j \in S_1} e^{V_j^1} = \lambda y_n + \ln \sum_{j \in S_0} e^{V_j^0}.
+\end{equation}
+Income enters every alternative equally and cancels, giving the log-sum formula of Small and Rosen:\cite{RN93}
+\begin{equation}\label{eq:cv}
+CV = \frac{1}{\lambda}\Bigg[\ln \sum_{j \in S_1} e^{V_j^1} - \ln \sum_{j \in S_0} e^{V_j^0}\Bigg].
+\end{equation}
+A positive CV is a welfare gain: the amount an individual would be willing to pay for the new set of services. In the base case, $\lambda = -\beta_{price} = \mmclambda$ per US\$. We computed the CV of each policy relative to the initial state. Because a single price coefficient applies to all payments, an incentive payment of $m$ dollars contributes $\lambda m$ to utility and is valued at exactly $m$ dollars; it therefore cancels against its cost to the payer, as a transfer should in a societal analysis. The utility of receiving a cash or voucher incentive, beyond its money value ($\beta_{cash}$ and $\beta_{voucher}$), does not cancel.
+
+\subsection{Costs}
+The incremental cost per uncircumcised man of a policy, $S_1$, relative to the initial state is
+\begin{equation}\label{eq:cost}
+\Delta C = \sum_{j \in S_1} P_j(S_1)\,\big(c_j + m_j + d\,\mathbf{1}[m_j > 0]\big) - \sum_{j \in S_0} P_j(S_0)\,(c_j + m_j),
+\end{equation}
+where $c_j$ is the provider cost per procedure for option $j$, $m_j$ is the incentive payment and $d$ is the cost of delivering it; the opt-out has no cost. Incentive payments are made to every man who chooses an option with an incentive, including those who would have been circumcised in the initial state. We obtained the costs of surgical circumcision at fixed sites and in outreach (mobile) camps from Larson et al.,\cite{RN296} and the incremental cost of device circumcision from Duffy et al.\cite{RN198} Costs were converted to 2017 US\$, the year of the survey, using the US consumer price index (Table~\ref{tab:costs}).
+
+\begin{table}[!htbp]
+\centering
+\caption{Cost inputs (2017 US\$), ranges for the one-way analyses and distributions for the probabilistic analysis.}\label{tab:costs}
+\footnotesize
+\adjustbox{max width=\textwidth}{\input{tables/tab_costs.tex}}
+\end{table}
+
+\subsection{Averted HIV treatment costs}
+The CV includes the benefits of circumcision as perceived by the man, but not the costs of HIV treatment, which are not borne by him. We therefore estimated the present value of the HIV treatment costs averted by one additional circumcision as
+\begin{equation}\label{eq:tx}
+B_{tx} = \frac{c_{ART}}{k} \sum_{t=d}^{d+L-1} (1+r)^{-t} = \frac{c_{ART}}{k}\,(1+r)^{-d}\,\frac{1 - (1+r)^{-L}}{r},
+\end{equation}
+where $k$ is the number of circumcisions needed to avert one HIV infection (12, for men aged 20--34 in Uganda\cite{Kripke2016}), $c_{ART}$ is the annual cost of antiretroviral therapy (ART), $d$ is the number of years from circumcision until an averted infection would have started ART, $L$ is the number of years on ART, and $r$ is the discount rate (Table~\ref{tab:costs}). With these values, $B_{tx} = \$\mmctxPerMMC$ per additional circumcision.
+
+\subsection{Net benefit}
+The net benefit per uncircumcised man is reported in two ways:
+\begin{equation}\label{eq:nb}
+NB_{CV} = CV - \Delta C, \qquad NB = NB_{CV} + \Delta U \cdot B_{tx},
+\end{equation}
+where $\Delta U = P_{circ}(S_1) - P_{circ}(S_0)$ is the change in the uptake of MMC. The first measures the value of a policy to the men who choose among the services, net of its cost; the second adds the averted HIV treatment costs. Benefits to female partners and others are not included.
+
+\subsection{Uncertainty}
+We used the Krinsky and Robb method\cite{KrinskyRobb1986} to characterize the uncertainty in the CV and the net benefit due to sampling uncertainty in the utility parameters: we drew 5,000 sets of utility parameters from a multivariate normal distribution with the estimated robust covariance matrix, re-calibrated the opt-out constant and re-computed every policy. Draws with a non-negative price coefficient, for which the CV is undefined, were excluded. In the probabilistic analysis, we also drew each cost input from a beta-PERT distribution over its low, base and high values,
+\begin{equation}
+x = a + (b - a)\,Z, \qquad Z \sim \text{Beta}\Big(1 + 4\,\frac{m - a}{b - a},\; 1 + 4\,\frac{b - m}{b - a}\Big),
+\end{equation}
+where $a$, $m$ and $b$ are the low, base and high values. In one-way sensitivity analyses, each input was set to its low and then its high value while all other inputs were held at the base case: costs to the ranges in Table~\ref{tab:costs}, utility parameters to their 95\% confidence limits, and the calibration share to 60\% and 80\%. We also examined scenarios with the three price coefficients, without calibration, and with incentives valued only at their money value.
+
+\subsection{Software}
+The model was implemented in R. Utility parameters were estimated in 2018 with the CMC choice modelling code for R, and re-estimated with an R implementation using the \textsf{torch} library, which reproduces them. An interactive application runs the same model and allows all inputs to be changed. The choice data needed to estimate the conditional logit models (the choices and the experimental design, with no other information about respondents), the code and the application are available at \url{https://github.com/lubingas/MMC-CBA}.
+
+
+\section{Results}
+\subsection{Descriptive summary}
+We interviewed a total of 406 respondents. Respondent characteristics are summarized in Table~\ref{tab:demographics}. The mean (SD) age and years of schooling were 27.0 (6.7) and 7.0 (3.2) years respectively. The median monthly income was US\$26.7. The majority lived in urban areas (64\%), and a half (50\%) were married. Most participants belonged to the Baganda tribe (67\%), were Catholic (48\%), and worked in fishing or fishing related businesses (38\%).
+
+\begin{table}[!htbp]
+\centering
+\caption{Demographic summary (N = 406).}\label{tab:demographics}
+\small
+\begin{threeparttable}
+\begin{tabular}{lr}
+\toprule
+Variable & Value \\
+\midrule
+Age, mean (SD) & 27.01 (6.69) \\
+Years of schooling, mean (SD) & 6.97 (3.18) \\
+Net monthly income in US\$, median\tnote{a} & 26.67 \\
+ & N (\%) \\
+Net monthly income above US\$60\tnote{a} & 347 (85\%) \\
+Lives in urban area & 258 (64\%) \\
+Marital status & \\
+\hspace{1em}Married & 205 (50\%) \\
+\hspace{1em}Never married & 150 (37\%) \\
+\hspace{1em}Other marital status & 51 (13\%) \\
+Muganda & 274 (67\%) \\
+Religion & \\
+\hspace{1em}Catholic & 194 (48\%) \\
+\hspace{1em}Protestant & 155 (38\%) \\
+\hspace{1em}Other religion & 57 (14\%) \\
+Occupation: fishing or fishing related & 154 (38\%) \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item[a] Income net of expenditure.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Conditional logit}
+Results of the CL models are shown in Table~\ref{tab:cl}. The alternative specific constant representing the \emph{neither} option was negative and statistically significant. Preferences for all the attributes were directionally consistent with our prior hypotheses. In the base-case model, the price coefficient was negative and statistically significant ($-$\mmclambda, robust se \mmclambdaSE). When we allowed the marginal utility of price to depend on the type of payment, the coefficient for out-of-pocket payment was not significant, and the coefficients for voucher and cash payments were. The three price coefficients were not statistically different from each other (likelihood ratio test statistic 0.44, 2 degrees of freedom, $p = 0.80$), and both the AIC and BIC favoured the model with a single price coefficient. In money terms, receiving a cash incentive was worth \$\mmccashConst{} beyond the value of the payment itself, and a voucher \$\mmcvoucherConst.
+
+\begin{table}[!htbp]
+\centering
+\caption{Conditional logit estimates, $\beta$ (robust se).}\label{tab:cl}
+\small
+\begin{threeparttable}
+\input{tables/tab_cl.tex}
+\begin{tablenotes}\footnotesize
+\item *** $p < 0.001$, ** $p < 0.01$, * $p < 0.05$, \dag{} $p < 0.1$. Price is in US\$; positive values are out-of-pocket payments and negative values incentive payments.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Predicted uptake}
+Predicted choice probabilities are shown in Table~\ref{tab:shares}. In the initial state, \mmcoptoutShare\% of men chose the opt-out by construction. Each policy increased the uptake of MMC, from \mmcPTwoUptakeChange{} percentage points for device circumcision (Policy 2) to \mmcPFiveUptakeChange{} percentage points for cash incentives with outreach services (Policy 5). Outreach services drew men both from the opt-out and from surgical circumcision at permanent health facilities.
+
+\begin{table}[!htbp]
+\centering
+\caption{Predicted choice probabilities and uptake of MMC, by policy.}\label{tab:shares}
+\small
+\adjustbox{max width=\textwidth}{\input{tables/tab_shares.tex}}
+\end{table}
+
+\subsection{Compensating variation, costs and net benefit}
+The CV, incremental costs and net benefits of each policy are shown in Table~\ref{tab:results} and Figures~\ref{fig:cvcost} and~\ref{fig:netbenefit}. The CV ranged from \mmcPTwoCV{} per uncircumcised man for device circumcision to \mmcPFiveCV{} for cash incentives with outreach services. For every policy, the CV was close to the incremental cost. The CV of outreach services (Policy 1: \mmcPOneCV) was lower than their incremental cost (\mmcPOneCost), mainly because surgical circumcision in outreach camps costs nearly twice as much per procedure as at fixed sites; the net benefit based on the CV was positive in only \mmcPOneNBcvP{} of simulations. Device circumcision (Policy 2) had the highest probability of a positive net benefit based on the CV (\mmcPTwoNBcvP), and cash incentives with outreach services (Policy 5) the highest expected value (\mmcPFiveNBcv{} per man). Of the incremental cost of cash incentives (Policy 4: \mmcPFourCost), \mmcPFourTransfers{} was incentive payments.
+
+Including the averted HIV treatment costs, all policies had large positive net benefits, ranging from \mmcPTwoNBtotal{} (Policy 2) to \mmcPFiveNBtotal{} per uncircumcised man (Policy 5). The cost per additional circumcision, including incentive payments, ranged from \$\mmccostPerMMCmin{} to \$\mmccostPerMMCmax{}, against \$\mmctxPerMMC{} in averted treatment costs.
+
+\begin{table}[!htbp]
+\centering
+\caption{Uptake, compensating variation, incremental cost and net benefit per uncircumcised man (2017 US\$). 95\% Krinsky-Robb intervals in brackets.}\label{tab:results}
+\small
+\adjustbox{max width=\textwidth}{\input{tables/tab_results.tex}}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_cv_cost.pdf}
+\caption{Compensating variation and incremental cost of each policy, per uncircumcised man, relative to the initial state. Whiskers: 95\% Krinsky-Robb intervals for the CV.}\label{fig:cvcost}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_net_benefit.pdf}
+\caption{Net benefit of each policy per 1,000 uncircumcised men, based on the CV alone (left) and including averted HIV treatment costs (right). Points: base case; lines: 95\% Krinsky-Robb intervals. The two panels are on different scales.}\label{fig:netbenefit}
+\end{figure}
+
+\subsection{Sensitivity analyses}
+In the one-way sensitivity analyses of Policy 5 (Figure~\ref{fig:tornado}), the net benefit based on the CV was most sensitive to the price coefficient (\mmcOWcvTopOneLo{} to \mmcOWcvTopOneHi{} at its 95\% confidence limits), followed by the calibration share and the cost of device circumcision. The net benefit including averted HIV treatment costs was most sensitive to the number of circumcisions needed to avert one infection, the number of years on ART, the discount rate and the annual cost of ART.
+
+Results of the scenario analyses are shown in Table~\ref{tab:scenarios}. Using the cash price coefficient of the model with three price coefficients gave almost the same CVs as the base case, but much wider intervals (Figure~\ref{fig:pricespec}): for cash incentives, \mmcPFourCVthree{} (\mmcPFourCVthreeLo{} to \mmcPFourCVthreeHi), compared with \mmcPFourCV{} (\mmcPFourCVlo{} to \mmcPFourCVhi), and \mmcpctDroppedThree\% of draws had a non-negative price coefficient. Using the voucher price coefficient made every policy's CV lower than its cost; using the out-of-pocket price coefficient made every CV higher. Without calibration, the model predicted that \mmcuncalUptake\% of men would already be circumcised in the initial state; the policies then mainly benefited men who would have been circumcised anyway, and the CVs were two to two and a half times higher. Valuing incentives at their money value only (setting the cash and voucher constants to zero) made the net benefit of both incentive policies negative.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_tornado.pdf}
+\caption{One-way sensitivity analyses for Policy 5 (cash incentives and outreach services), per uncircumcised man: the ten inputs with the largest effects on the net benefit based on the CV (top) and including averted HIV treatment costs (bottom).}\label{fig:tornado}
+\end{figure}
+
+\begin{table}[!htbp]
+\centering
+\caption{Scenario analyses: net benefit based on the CV (CV minus incremental cost) per uncircumcised man (2017 US\$).}\label{tab:scenarios}
+\small
+\input{tables/tab_scenarios.tex}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_price_spec.pdf}
+\caption{Compensating variation with one price coefficient (base case) and with the cash price coefficient of the model with three price coefficients. Whiskers: 95\% Krinsky-Robb intervals.}\label{fig:pricespec}
+\end{figure}
+
+\subsection{Probabilistic analysis}
+Results of the probabilistic analysis, in which the utility parameters and costs were drawn together, are shown in Table~\ref{tab:psa} and Figure~\ref{fig:plane}. Based on the CV alone, the probability of a positive net benefit was highest for device circumcision (\mmcPTwoPSAnbcvP) and lowest for outreach services (\mmcPOnePSAnbcvP). Cash incentives with outreach services had the highest net benefit in \mmcPFiveBestCV{} of draws, device circumcision in \mmcPTwoBestCV, and the initial state in \mmcInitBestCV. Including averted HIV treatment costs, cash incentives with outreach services had the highest net benefit in \mmcPFiveBestTotal{} of draws.
+
+\begin{table}[!htbp]
+\centering
+\caption{Probabilistic analysis: net benefit per uncircumcised man (2017 US\$) and the probability that each policy has the highest net benefit (5,000 draws).}\label{tab:psa}
+\small
+\adjustbox{max width=\textwidth}{\input{tables/tab_psa.tex}}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/fig_bc_plane.pdf}
+\caption{Benefit-cost plane: incremental cost and CV per uncircumcised man in 800 draws of the probabilistic analysis. Above the dashed line, the CV exceeds the incremental cost.}\label{fig:plane}
+\end{figure}
+
+
+\section{Discussion}
+\subsection{Summary of findings}
+We used a discrete choice experiment to value five MMC service delivery policies in monetary terms and compared these valuations with the costs of providing the services. Respondents had a strong baseline preference for circumcision, preferred permanent health facilities, more weekdays of MMC service availability, and incentives (vouchers and cash). Longer distances to access MMC services, less privacy and device circumcision were associated with disutility. For every policy, the CV was close to the incremental cost of providing the services: outreach services were probably not worth their cost to the men who would use them, while device circumcision and cash incentives had modest positive net benefits. When the HIV treatment costs averted by additional circumcisions were included, all policies had large positive net benefits, the highest for cash incentives with outreach services.
+
+\subsection{Interpretation}
+Our choice experiment assessed three policy options that could influence the demand for MMC: service delivery models, the potential introduction of device circumcision, and incentives and potential out-of-pocket cost for circumcision. Of the attributes that characterize service delivery models, permanency of the health facility was the most highly valued. In our qualitative work, the importance of permanent health facilities was driven primarily by fear of procedure-related complications and the need to have readily accessible help. This explains why outreach services, although closer and available more often, increased uptake only moderately, and why their CV was lower than their cost: the average cost of circumcision in surgical outreach camps (\$61 to \$72 in 2012 US\$\cite{RN296}) is nearly twice that at fixed sites.
+
+Circumcision devices have been promoted for their potential to resolve implementation challenges and their potential appeal to men.\cite{RN167} We found that men, on average, disliked device circumcision. Several attributes of devices may not appeal to men, in particular the requirement for tetanus immunizations and multiple clinic visits.\cite{RN285} Nevertheless, offering device circumcision alongside surgical circumcision at permanent health facilities had the highest probability of a positive net benefit, because the device appealed to some men at a modest incremental cost. Incentives were significantly valued components of the hypothetical MMC services. Cash incentives produced the largest increases in uptake, and their CV slightly exceeded their cost. Part of this value, however, came from the utility of receiving a cash incentive beyond its money value; without it, the incentive policies did not pay for themselves on the CV alone.
+
+The main source of benefit in a societal benefit-cost analysis of MMC is likely to be the HIV treatment costs averted, which are not borne by the men who choose the services and are therefore not reflected in their CV. In our analysis, every additional circumcision averted about \$\mmctxPerMMC{} in treatment costs, many times the cost per additional circumcision. The CV adds a measure of the value of the policies to the men themselves, which captures the intangible (psychological and socio-cultural) costs and benefits of circumcision that are not included in cost-effectiveness analyses.
+
+\subsection{Comparison with the earlier version of this analysis}
+In the 2018 version of this paper, we reported CL estimates of the CV of \$27.25 for outreach services, \$14.77 for device circumcision and \$44.64 for cash incentives, with respect to the out-of-pocket price coefficient. We reproduced these values (\mmcReproOutreach, \mmcReproDevice{} and \mmcReproCash) by adding the options one at a time to a growing choice set: outreach services to the initial state, device circumcision to the initial state with outreach services, and both cash options to the initial state with outreach services and device circumcision (Table~\ref{tab:repro}, column a). The CVs of device circumcision and cash incentives were therefore increments over the preceding policies, rather than each policy compared with the initial state as described in the text. Comparing each policy with the initial state (column b), using the single price coefficient (column c) and calibrating the model to the observed uptake of MMC (column d) each changed the CV; calibration had the largest effect.
+
+\begin{table}[!htbp]
+\centering
+\caption{Compensating variation (US\$) in the 2018 working paper and in this analysis.}\label{tab:repro}
+\small
+\adjustbox{max width=\textwidth}{\input{tables/tab_repro.tex}}\\[3pt]
+\parbox{\textwidth}{\footnotesize (a) and (b): three price coefficients, CV with respect to the out-of-pocket price coefficient, not calibrated. (c): single price coefficient, not calibrated. (d): single price coefficient, calibrated to \mmcoptoutShare\% uncircumcised in the initial state.}
+\end{table}
+
+\subsection{Strengths and limitations}
+We followed best practices for the development of choice experimental surveys,\cite{RN69,RN76} including the identification of relevant attributes and attribute levels using qualitative methods. Our findings should be interpreted in light of some limitations. Our sample was drawn from a single sub-county in Uganda, potentially limiting the generalizability of our findings. The length of the survey and complex nature of the questions likely imposed a high cognitive burden on the respondents and may have induced non-compensatory heuristics in evaluating the choice tasks.\cite{RN280,RN278} Preferences in stated choice experiments may not reflect actual preferences in real life,\cite{RN286} and the CV measures what men stated they would trade in hypothetical choices.
+
+The CL model assumes that all individuals have the same preferences. In the earlier version of this paper, mixed and latent class logit models revealed substantial heterogeneity in preferences; however, in some classes and parts of the mixing distribution the price coefficients had the wrong sign, which leaves the CV undefined. A model with a sign-constrained marginal utility of income would allow the CV to vary across individuals. The costs were obtained from studies in other districts in 2012, from the provider's perspective; the travel and time costs borne by men are reflected in their CV rather than in the costs. The averted treatment costs were based on national estimates; the incidence of HIV is higher in fishing communities, which would reduce the number of circumcisions needed to avert one infection and increase the averted costs. Finally, the observed share of uncircumcised men used for calibration determines the level of the CV, and was itself uncertain.
+
+\subsection{Implications for policy}
+Our study suggests that, where resources are limited, policymakers should continue to prioritize the provision of MMC services at permanent health facilities, using surgical methods of circumcision. Offering device circumcision alongside surgical circumcision at permanent health facilities is likely to be worth its cost. Although controversial for a voluntary procedure, policymakers should also consider the use of cash incentives to increase the utilization of MMC services: the projections in our policy analysis are based on modest \$12 and \$8 cash incentives for device and surgical circumcision respectively, and, including the HIV treatment costs averted, they had the highest net benefit of all the policies we examined. Outreach services are unlikely to be worth their cost to the men who would use them, unless their cost per procedure can be reduced, but may still be justified by the treatment costs they avert.
+
+
+\section{Conclusion}
+Discrete choice experiments can provide the benefit side of a formal benefit-cost analysis of MMC demand creation strategies. The compensating variation measures the value of service delivery policies to the men who choose among them, and can be set against the costs of providing the services and the HIV treatment costs they avert. Two methodological choices matter: the marginal utility of income must be precisely estimated, which favours a single price coefficient where the data support it, and the model should be calibrated to the observed uptake of MMC. In this population, cash incentives and device circumcision at permanent health facilities had positive net benefits based on the CV alone, and all policies had positive net benefits when averted treatment costs were included.
+
+
+\section*{Acknowledgements}
+This research was funded in part by a 2015 developmental grant from the University of Washington (UW) Center for AIDS Research (CFAR), an NIH-funded program under award number AI027757 which is supported by the following NIH Institutes and Centers (NIAID, NCI, NIMH, NIDA, NICHD, NHLBI, NIA, NIGMS, NIDDK). We received additional financial support from the UW Pharmaceutical Outcomes Research and Policy Program Rubenstein Endowment for graduate students. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health. The authors thank the research assistants for conducting the survey. We thank the community mobilizers and health officials from Mukono and Buikwe districts for their help with participant recruitment. We gratefully acknowledge all the participants who agreed to participate in the study.
+
+\bibliographystyle{myunsrtnat}
+\bibliography{working_papers,additions}
+
+\end{document}

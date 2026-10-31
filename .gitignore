@@ -1,0 +1,19 @@
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+~$*
+rsconnect/
+
+# working paper: LaTeX build files, and the PDF built with licensed fonts (keep it on the Mac).
+# The draft PDF the app links to is www/working_paper.pdf.
+paper/*.aux
+paper/*.log
+paper/*.bbl
+paper/*.blg
+paper/*.out
+paper/*.toc
+paper/*.synctex.gz
+paper/fonts.tex
+paper/workingpaper.pdf

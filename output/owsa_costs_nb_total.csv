@@ -1,0 +1,46 @@
+"parameter","label","policy","low","high","base"
+"cost_surgery_hospital","Surgical circumcision at permanent health facilities, per procedure","outreach",67.4060248286788,68.5937239140121,68.0851374039197
+"cost_surgery_hospital","Surgical circumcision at permanent health facilities, per procedure","device",59.0357648710243,60.0234724174837,59.6005246016194
+"cost_surgery_hospital","Surgical circumcision at permanent health facilities, per procedure","outreach_device",109.344697120534,111.211816233572,110.412294195243
+"cost_surgery_hospital","Surgical circumcision at permanent health facilities, per procedure","cash",149.149446310359,148.306494876217,148.667456447512
+"cost_surgery_hospital","Surgical circumcision at permanent health facilities, per procedure","cash_outreach",177.845530892095,177.893317556689,177.87285475321
+"cost_surgery_outreach","Surgical circumcision at outreach camps, per procedure","outreach",71.0505713747119,65.9461358512172,68.0851374039197
+"cost_surgery_outreach","Surgical circumcision at outreach camps, per procedure","device",59.6005246016194,59.6005246016194,59.6005246016194
+"cost_surgery_outreach","Surgical circumcision at outreach camps, per procedure","outreach_device",112.999947027357,108.545790513063,110.412294195243
+"cost_surgery_outreach","Surgical circumcision at outreach camps, per procedure","cash",148.667456447512,148.667456447512,148.667456447512
+"cost_surgery_outreach","Surgical circumcision at outreach camps, per procedure","cash_outreach",179.842256124163,176.452302944654,177.87285475321
+"cost_device_hospital","Device circumcision at permanent health facilities, per procedure","outreach",68.0851374039197,68.0851374039197,68.0851374039197
+"cost_device_hospital","Device circumcision at permanent health facilities, per procedure","device",61.4359478404728,58.9536794073099,59.6005246016194
+"cost_device_hospital","Device circumcision at permanent health facilities, per procedure","outreach_device",111.956005512253,109.868254964579,110.412294195243
+"cost_device_hospital","Device circumcision at permanent health facilities, per procedure","cash",151.390891948627,147.70765538985,148.667456447512
+"cost_device_hospital","Device circumcision at permanent health facilities, per procedure","cash_outreach",180.266860158143,177.02915240786,177.87285475321
+"cost_incentive_payment","Cost of delivering an incentive payment","outreach",68.0851374039197,68.0851374039197,68.0851374039197
+"cost_incentive_payment","Cost of delivering an incentive payment","device",59.6005246016194,59.6005246016194,59.6005246016194
+"cost_incentive_payment","Cost of delivering an incentive payment","outreach_device",110.412294195243,110.412294195243,110.412294195243
+"cost_incentive_payment","Cost of delivering an incentive payment","cash",148.667456447512,147.523000513737,148.667456447512
+"cost_incentive_payment","Cost of delivering an incentive payment","cash_outreach",177.87285475321,176.866833611882,177.87285475321
+"mmc_per_infection_averted","Circumcisions per HIV infection averted","outreach",103.345418031038,39.8769129022252,68.0851374039197
+"mmc_per_infection_averted","Circumcisions per HIV infection averted","device",88.9234782821872,36.1421616571653,59.6005246016194
+"mmc_per_infection_averted","Circumcisions per HIV infection averted","outreach_device",165.843122342702,66.0676316772767,110.412294195243
+"mmc_per_infection_averted","Circumcisions per HIV infection averted","cash",222.638683970068,89.4904744294671,148.667456447512
+"mmc_per_infection_averted","Circumcisions per HIV infection averted","cash_outreach",266.313458138452,107.120372045017,177.87285475321
+"art_cost_per_year","Antiretroviral therapy (ART), cost per person per year","outreach",47.2269432301315,89.7946864419442,68.0851374039197
+"art_cost_per_year","Antiretroviral therapy (ART), cost per person per year","device",42.254552001847,77.6544960830153,59.6005246016194
+"art_cost_per_year","Antiretroviral therapy (ART), cost per person per year","outreach_device",77.6222268404089,144.540731646194,110.412294195243
+"art_cost_per_year","Antiretroviral therapy (ART), cost per person per year","cash",104.909828898958,194.211109610293,148.667456447512
+"art_cost_per_year","Antiretroviral therapy (ART), cost per person per year","cash_outreach",125.555878102786,232.325218205693,177.87285475321
+"years_to_art","Years from circumcision to start of ART (averted infection)","outreach",74.6242974873413,58.3962317672892,68.0851374039197
+"years_to_art","Years from circumcision to start of ART (averted infection)","device",65.0385836534955,51.5430920983793,59.6005246016194
+"years_to_art","Years from circumcision to start of ART (averted infection)","outreach_device",120.692162998502,95.1808764716998,110.412294195243
+"years_to_art","Years from circumcision to start of ART (averted infection)","cash",162.38571647648,128.341462707673,148.667456447512
+"years_to_art","Years from circumcision to start of ART (averted infection)","cash_outreach",194.274518413417,153.570930735418,177.87285475321
+"years_on_art","Years on ART per averted infection","outreach",37.9985004079491,90.4724209123282,68.0851374039197
+"years_on_art","Years on ART per averted infection","device",34.580046960883,78.218109761901,59.6005246016194
+"years_on_art","Years on ART per averted infection","outreach_device",63.1146784304957,145.606162274916,110.412294195243
+"years_on_art","Years on ART per averted infection","cash",85.5498229223307,195.632903476281,148.667456447512
+"years_on_art","Years on ART per averted infection","cash_outreach",102.408896939162,234.025126556667,177.87285475321
+"discount_rate","Discount rate for averted treatment costs","outreach",91.9132899810172,51.2209402489643,68.0851374039197
+"discount_rate","Discount rate for averted treatment costs","device",79.4163570874891,45.5760170469518,59.6005246016194
+"discount_rate","Discount rate for averted treatment costs","outreach_device",147.871276570917,83.900978978363,110.412294195243
+"discount_rate","Discount rate for averted treatment costs","cash",198.655648951206,113.288686269062,148.667456447512
+"discount_rate","Discount rate for averted treatment costs","cash_outreach",237.639145718386,135.57370836341,177.87285475321

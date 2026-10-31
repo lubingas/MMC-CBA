@@ -1,0 +1,47 @@
+Model: cl_one_price_slope; price coefficient: price (marginal utility of income = 0.0272 per US$); opt-out calibrated to 69.2%
+Averted HIV treatment costs per extra circumcision: US$559
+Krinsky-Robb: 5000 draws, 0.0% dropped because the price coefficient had the wrong sign
+
+Per uncircumcised man (2017 US$)
+                                  label uptake uptake_change    cv cv_lo cv_hi
+            Policy 1: outreach services   0.43          0.13  7.39  5.20 12.07
+          Policy 2: device circumcision   0.41          0.10  6.04  4.30  9.62
+          Policy 3: outreach and device   0.51          0.20 12.40  8.91 19.78
+              Policy 4: cash incentives   0.57          0.26 17.70 12.76 28.15
+ Policy 5: cash incentives and outreach   0.62          0.32 22.44 16.26 35.52
+ total_cost nb_cv tx_savings nb_total
+       9.83 -2.44      70.52    68.09
+       5.08  0.95      58.65    59.60
+      12.85 -0.45     110.86   110.41
+      16.97  0.73     147.94   148.67
+      21.45  0.99     176.88   177.87
+Three price slopes: 2.0% of draws dropped
+
+Probabilistic analysis (utility parameters and costs), per man
+                                  label nb_cv_mean nb_cv_lo nb_cv_hi
+                          Initial state         NA       NA       NA
+            Policy 1: outreach services      -2.05    -5.15     2.31
+          Policy 2: device circumcision       1.35    -0.79     4.82
+          Policy 3: outreach and device       0.25    -4.16     7.22
+              Policy 4: cash incentives       1.66    -4.05    11.57
+ Policy 5: cash incentives and outreach       2.15    -5.04    14.58
+ nb_cv_p_positive nb_total_mean nb_total_lo nb_total_hi p_best_nb_cv
+               NA            NA          NA          NA       0.1384
+             0.13         65.72       36.97      106.55       0.0000
+             0.86         57.64       33.32       92.51       0.3094
+             0.48        106.73       61.22      169.46       0.0022
+             0.63        143.81       82.47      230.15       0.0598
+             0.63        172.11       99.61      273.52       0.4902
+ p_best_nb_total
+            0.00
+            0.00
+            0.00
+            0.00
+            0.00
+            1.00
+
+Reproducing the 2018 working paper (CV w.r.t. out-of-pocket price)
+              policy paper_2018 this_model
+   Outreach services      27.25      27.29
+ Device circumcision      14.77      14.80
+     Cash incentives      44.64      44.71

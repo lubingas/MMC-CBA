@@ -1,0 +1,18 @@
+% fonts_mac.tex: Solomon's fonts, installed in the Mac's /Library/Fonts.
+% Sabon is licensed: build with this file only on the Mac, and keep that PDF on the Mac.
+\def\FP{/Library/Fonts/}   % in a VM linked to the Mac this was ../mnt/Fonts/
+\setmainfont[Path=\FP, UprightFont=SabonLTStd-Roman.otf, ItalicFont=SabonLTStd-Italic.otf,
+  BoldFont=SabonLTStd-Bold.otf, BoldItalicFont=SabonLTStd-BoldItalic.otf,
+  Ligatures=TeX, Numbers=OldStyle, WordSpace=0.95]{Sabon LT Std}
+\setsansfont[Path=\FP, UprightFont=SourceSansPro-Regular.otf, ItalicFont=SourceSansPro-It.otf,
+  BoldFont=SourceSansPro-Bold.otf, BoldItalicFont=SourceSansPro-BoldIt.otf,
+  Scale=MatchLowercase]{Source Sans Pro}
+\setmonofont[Path=\FP, UprightFont=Inconsolata.otf, Scale=MatchLowercase]{Inconsolata}
+\newfontfamily\slabfont[Path=\FP, UprightFont=MuseoSlab-500.otf, ItalicFont=MuseoSlab-500Italic.otf,
+  Scale=MatchLowercase]{Museo Slab 500}
+\setmathsfont(Digits,Latin)[Path=\FP, UprightFont=SabonLTStd-Roman.otf, ItalicFont=SabonLTStd-Italic.otf,
+  Numbers={Lining}]{Sabon LT Std}
+\setmathsfont(Greek)[Path=\FP, UprightFont=STIX2Text-Regular.otf, ItalicFont=STIX2Text-Italic.otf,
+  BoldFont=STIX2Text-Bold.otf, BoldItalicFont=STIX2Text-BoldItalic.otf,
+  Scale=MatchLowercase]{STIX Two Text}
+\newcommand{\lnt}[1]{{\addfontfeatures{Numbers={Lining}}#1}}   % lining figures in running text
