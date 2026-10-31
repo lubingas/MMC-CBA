@@ -27,8 +27,13 @@
 #                        positive. The kink is smoothed (softplus, CENS_TAU)
 #   Draws: modified Latin hypercube, as make_draws() in MMC-Demand, so a seed
 #   gives the same draws; draw column k belongs to coefficient k in MMC-Demand's
-#   order. Start values as in MMC-Demand: means from the conditional logit
-#   (lognormal: log of minus the CL estimate), standard deviations 0.5.
+#   order.
+#   Starts, as in MMC-Demand: the rule start (means from the conditional logit,
+#   lognormal at log of minus the CL estimate, standard deviations 0.5); for a
+#   three-price model, the fit of the matching one-price model (nested: with a
+#   fixed price it reproduces that model's LL, so the three-price fit cannot end
+#   below it); and starts - 1 random starts around the rule start, drawn as
+#   random_start() in MMC-Demand. The best endpoint gets the post-estimation.
 #
 # Fits are saved in estimation/output/fits/ and reloaded when the
 # specification, data, draws and seed match, so a rerun only fits what is new.
@@ -38,12 +43,14 @@
 #   Rscript estimation/mmc_torch.R draws=3000 seed=1   as in MMC-Demand's main runs
 #   Rscript estimation/mmc_torch.R models=cl           the conditional logits only
 #   Rscript estimation/mmc_torch.R models=mixl_one_price_slope_fixed
+#   Rscript estimation/mmc_torch.R draws=3000 starts=10   rule, nested and 9 random starts
 # Long runs, so they survive a closed terminal:
 #   nohup caffeinate -i -s Rscript estimation/mmc_torch.R draws=3000 > estimation/output/run.log 2>&1 &
 # =============================================================================
 
 suppressPackageStartupMessages(library(torch))
 f64 <- torch_float64()
+`%||%` <- function(a, b) if (is.null(a)) b else a
 out_dir <- file.path("estimation", "output")
 fit_dir <- file.path(out_dir, "fits")
 dir.create(fit_dir, recursive = TRUE, showWarnings = FALSE)
@@ -54,11 +61,13 @@ torch_set_num_threads(max(1, parallel::detectCores() - 1))
 N_DRAWS <- 1000          # draws per man
 SEED    <- 1             # draws seed
 WHICH   <- "all"         # models to fit: all, cl, mixl, or model names
+STARTS  <- 1             # starts per mixed logit: the rule start, plus STARTS - 1 random starts
 for (a in commandArgs(trailingOnly = TRUE)) {
   kv <- strsplit(a, "=")[[1]]
   if (kv[1] == "draws")  N_DRAWS <- as.integer(kv[2])
   if (kv[1] == "seed")   SEED    <- as.integer(kv[2])
   if (kv[1] == "models") WHICH   <- strsplit(kv[2], ",")[[1]]
+  if (kv[1] == "starts") STARTS  <- as.integer(kv[2])
 }
 CENS_TAU <- 0.005        # softplus smoothing of the censored normal, min(0, x)
 N_BIC    <- 4872         # choice tasks (BIC convention of the CMC outputs and MMC-Demand)
@@ -252,10 +261,35 @@ checkModel <- function(s, Xa, Y_arr, eta_arr, n_men = 15, n_draws = 20) {
 }
 
 
+## starts
+# random start around the rule start, as random_start() in MMC-Demand: means
+# + N(0, 0.5 x scale), SDs uniform on (0.2, 2) x scale ((0.2, 1.5) if
+# lognormal), where scale is 1 / SD of the attribute (1 for lognormal)
+randomStart <- function(rule, r, mi, seed, uscale, s) {
+  set.seed(100000 * seed + 1000 * mi + r)
+  K <- length(s$vars)
+  sc <- ifelse(s$ln, 1, uscale)
+  ri <- match(s$random, s$vars)
+  c(rule[1:K] + rnorm(K, 0, 0.5 * sc),
+    runif(length(ri), 0.2, ifelse(s$ln[ri], 1.5, 2.0)) * sc[ri])
+}
+
+# a three-price model started at the fit of the matching one-price model:
+# each price coefficient (and its SD) takes the value of the single one
+nestedStart <- function(model, fits) {
+  src <- sub("three_price_slopes", "one_price_slope", model, fixed = TRUE)
+  if (src == model || is.null(fits[[src]])) return(NULL)
+  p1 <- fits[[src]]$est
+  nm <- MODELS[[model]]$names
+  base <- sub("^sd_", "", nm)
+  unname(p1[ifelse(base %in% PRICES3, sub("price(none|voucher|cash)$", "price", nm), nm)])
+}
+
+
 ## fit
 # BFGS, then the exact Hessian and the robust (sandwich, clustered by man)
 # covariance. Saved fits are reloaded when nothing has changed
-RunModel <- function(dat, model, R = N_DRAWS, seed = SEED) {
+RunModel <- function(dat, model, R = N_DRAWS, seed = SEED, starts = STARTS, fits = list()) {
   s <- MODELS[[model]]
   is_mixl <- length(s$random) > 0
   Xa <- make_X(dat, s$vars)
@@ -263,11 +297,17 @@ RunModel <- function(dat, model, R = N_DRAWS, seed = SEED) {
   K <- length(s$vars)
 
   file <- file.path(fit_dir, paste0(model, if (is_mixl) sprintf("_R%d_seed%d", R, seed), ".rds"))
+  old <- NULL                                    # endpoints of earlier starts, reused
   if (file.exists(file)) {
     f <- readRDS(file)
     keep <- c("vars", "random", "ln", "cens")
     if (identical(f$spec[keep], s[keep]) && identical(f$data_md5, dat$md5)) {
-      cat(sprintf("\n%s: loaded the saved fit\n", model)); return(f)
+      done <- f$endpoints %||% list(rule = list(par = unname(f$est), ll = f$ll, convergence = f$convergence))
+      if (!is_mixl || (sum(startsWith(names(done), "random")) >= starts - 1 &&
+                       (is.null(nestedStart(model, fits)) || "nested" %in% names(done)))) {
+        cat(sprintf("\n%s: loaded the saved fit\n", model)); return(f)
+      }
+      old <- done
     }
   }
 
@@ -281,18 +321,40 @@ RunModel <- function(dat, model, R = N_DRAWS, seed = SEED) {
     cat(sprintf("\n%s (%d draws, seed %d)\n", model, R, seed))
     checkModel(s, Xa, dat$Y_arr, eta_arr)
     llf <- function(th) ll_mixl(th, s, X, dat$Y, eta)
-    start <- cl; start[s$ln] <- log(pmax(-cl[s$ln], 1e-3))
-    start <- c(start, rep(0.5, length(s$random)))
+    rule <- cl; rule[s$ln] <- log(pmax(-cl[s$ln], 1e-3))
+    rule <- c(rule, rep(0.5, length(s$random)))
+    start_list <- list(rule = rule)
+    nest <- nestedStart(model, fits)
+    if (!is.null(nest)) start_list$nested <- nest
+    if (starts > 1) {
+      uscale <- apply(Xa, 4, function(x) 1 / sd(as.vector(x)))
+      mi <- match(model, names(MODELS))
+      for (r in seq_len(starts - 1)) start_list[[sprintf("random%02d", r)]] <- randomStart(rule, r, mi, seed, uscale, s)
+    }
   } else {
     cat(sprintf("\n%s\n", model))
     llf <- function(th) ll_cl(th, X, dat$Y)
-    start <- cl
+    start_list <- list(rule = cl)
   }
 
+  # BFGS from every start not already run; the best endpoint is the fit
   t0 <- Sys.time()
   obj <- make_objective(llf)
-  opt <- optim(start, obj$fn, obj$gr, method = "BFGS",
-               control = list(maxit = 5000, reltol = 1e-12, trace = as.integer(is_mixl), REPORT = 20))
+  endpoints <- old %||% list()
+  for (nm in setdiff(names(start_list), names(endpoints))) {
+    t1 <- Sys.time()
+    o <- tryCatch(optim(start_list[[nm]], obj$fn, obj$gr, method = "BFGS",
+                        control = list(maxit = 5000, reltol = 1e-12)),
+                  error = function(e) list(par = NA, value = Inf, convergence = NA))
+    endpoints[[nm]] <- list(par = o$par, ll = -o$value, convergence = o$convergence)
+    if (is_mixl) cat(sprintf("  start %-9s LL %11.4f | convergence %s | %.1f min\n", nm, -o$value,
+                             o$convergence, as.numeric(difftime(Sys.time(), t1, units = "mins"))))
+  }
+  lls <- vapply(endpoints, `[[`, 0, "ll")
+  best <- endpoints[[which.max(lls)]]
+  opt <- list(par = best$par, value = -best$ll, convergence = best$convergence)
+  if (is_mixl) cat(sprintf("  best start: %s; %d of %d starts within 0.01 of the best LL\n",
+                           names(endpoints)[which.max(lls)], sum(lls > max(lls) - 0.01), length(lls)))
   par <- setNames(opt$par, s$names)
 
   H <- hessian_ll(llf, par)
@@ -315,6 +377,8 @@ RunModel <- function(dat, model, R = N_DRAWS, seed = SEED) {
             ll = ll, n_par = P, aic = -2 * ll + 2 * P, bic = -2 * ll + P * log(N_BIC),
             grad_max = grad_max, convergence = opt$convergence, hess_ok = hess_ok,
             draws = if (is_mixl) R else NA, seed = if (is_mixl) seed else NA, data_md5 = dat$md5,
+            endpoints = endpoints, best_start = names(endpoints)[which.max(lls)],
+            starts_at_best = sum(lls > max(lls) - 0.01),
             minutes = as.numeric(difftime(Sys.time(), t0, units = "mins")))
   saveRDS(f, file)
   f
@@ -390,10 +454,12 @@ if (!identical(WHICH, "all"))
   run <- run[run %in% WHICH | sub("_.*", "", run) %in% WHICH]
 # a mixed logit is compared with the conditional logit with the same price coefficients
 run <- union(names(MODELS)[startsWith(names(MODELS), "cl_")], run)
+# a three-price mixed logit starts from the matching one-price fit, so that is fitted (or loaded) first
+run <- names(MODELS)[names(MODELS) %in% union(run, sub("three_price_slopes", "one_price_slope", run, fixed = TRUE))]
 
 fits <- list()
 for (m in run) {
-  f <- RunModel(dat, m)
+  f <- RunModel(dat, m, fits = fits)
   fits[[m]] <- f
   writeFit(f)
   cat(sprintf("  LL %.3f, %d parameters, AIC %.1f, BIC %.1f | max |gradient| %.1e | Hessian %s | %.1f min\n",
@@ -415,6 +481,8 @@ summ <- do.call(rbind, lapply(fits, function(f) data.frame(
   model = f$model, draws = f$draws, seed = f$seed, LL = round(f$ll, 3), parameters = f$n_par,
   AIC = round(f$aic, 1), BIC = round(f$bic, 1),
   LL_gain_over_CL = round(f$ll - fits[[if (identical(f$spec$vars, VARS1)) "cl_one_price_slope" else "cl_three_price_slopes"]]$ll, 3),
+  best_start = f$best_start %||% "rule", starts = length(f$endpoints %||% 1),
+  starts_at_best = f$starts_at_best %||% 1,
   max_gradient = signif(f$grad_max, 2), converged = f$convergence == 0, hessian_ok = f$hess_ok,
   minutes = round(f$minutes, 1))))
 write.csv(summ, file.path(out_dir, sprintf("fit_summary_R%d_seed%d.csv", N_DRAWS, SEED)), row.names = FALSE)
