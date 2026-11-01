@@ -38,7 +38,7 @@
 \title{{\slabfont Preferences for medical male circumcision services and the benefits and costs of alternative service delivery policies: a discrete choice experiment among uncircumcised men in Uganda}}
 \author{\textsf{Solomon J. Lubinga, Joseph B. Babigumira, Susan M. Graham,}\\
   \textsf{Aggrey D. Mukose, Louis P. Garrison Jr, Anirban Basu}\\[0.4em]
-  \small\textsf{Working paper \textperiodcentered{} updated draft, 31 October 2026 (first version April 2018)}}
+  \small\textsf{Working paper \textperiodcentered{} updated draft, 1 November 2026 (first version April 2018)}}
 \date{}
 
 \begin{document}
@@ -46,10 +46,10 @@
 \thispagestyle{plain}
 
 \begin{abstract}
-\noindent Medical Male Circumcision (MMC) is a cost-effective strategy for prevention of HIV transmission if uptake can be increased. Discrete choice experiments (DCEs) are increasingly used to study the demand for health services, but their potential to value policy options in monetary terms, and hence to provide the benefit side of a formal benefit-cost analysis, is rarely realized. We conducted a DCE among 406 self-reported uncircumcised, HIV-negative men between 18--45 years-old in a high-HIV prevalence fishing community in Uganda. We estimated a conditional logit model, calibrated it to the observed share of uncircumcised men, and computed the compensating variation (CV) for five service delivery policies relative to an initial state in which surgical MMC services were only available at permanent health facilities. We compared the CV with the incremental cost of providing the services, including incentive payments, and with the HIV treatment costs averted by additional circumcisions. Cash incentives for device and surgical circumcision at permanent health facilities, combined with outreach services, had the highest predicted uptake (\mmcPFiveUptake\%) and the highest CV (\mmcPFiveCV{} per uncircumcised man; 95\% CI \mmcPFiveCVlo{} to \mmcPFiveCVhi). For every policy, the CV was within \$2.50 of the incremental cost; the CV of outreach services was lower than their cost in most simulations. Including the averted HIV treatment costs (\$\mmctxPerMMC{} per additional circumcision), all policies had positive net benefits, the highest for cash incentives with outreach services (\mmcPFiveNBtotal{} per uncircumcised man). The precision of the CV depended on the specification of price: a single price coefficient, preferred by a likelihood ratio test and information criteria, narrowed the CV intervals about five-fold compared with separate coefficients for out-of-pocket and incentive payments. In mixed logit models, which fit the data much better, the mean CVs with a fixed price coefficient were close to those of the conditional logit, but fewer than half of men valued any policy at more than its cost per man; with a log-normal or censored price coefficient, the mean CV was dominated by men who were nearly insensitive to price, while the median was stable. Choice experiments can provide the benefit side of a formal benefit-cost analysis of MMC demand creation strategies, provided the marginal utility of income is precisely estimated and the model is calibrated to observed uptake.
+\noindent Medical male circumcision (MMC) prevents HIV infection in men, but uptake in many priority countries has fallen short of targets. Discrete choice experiments (DCEs) are widely used to study the demand for health services, yet they are rarely used for what welfare economics allows them to do: value a policy in money, so that it can be weighed against what it costs. We conducted a DCE among 406 uncircumcised, HIV-negative men aged 18--45 years in a fishing community in Uganda with high HIV prevalence, and used it to value five policies to increase the uptake of MMC: outreach services, device circumcision, both together, cash incentives, and cash incentives with outreach services. We estimated conditional and mixed logit models, calibrated them to the observed share of uncircumcised men, and computed the compensating variation (CV) of each policy, which we compared with the incremental cost of the services and incentives and with the HIV treatment costs averted by additional circumcisions. With the conditional logit, the CV of every policy was within \$2.50 of its cost per man. Outreach services were worth less to men than they cost, while device circumcision and cash incentives were worth slightly more. Cash incentives with outreach services raised uptake the most, to \mmcPFiveUptake\%, and had the highest CV, \mmcPFiveCV{} per uncircumcised man. Once averted treatment costs were counted, every policy had a large positive net benefit. The mixed logits fitted the data far better. With a fixed price coefficient, they led to the same conclusions for four of the five policies, but they showed that the value of each policy was concentrated in a minority of men: fewer than half valued any policy at more than its cost. When the marginal utility of income was allowed to vary across men, the mean CV was dominated by men who were almost indifferent to price, while the median was far less sensitive. DCEs can supply the benefit side of a benefit-cost analysis, provided the marginal utility of income is well determined and the model is calibrated to observed uptake.
 \end{abstract}
 
-{\small\textbf{Keywords:} Medical Male Circumcision; Discrete choice experiment; Compensating variation; Benefit-cost analysis \\
+{\small\textbf{Keywords:} Medical Male Circumcision; Discrete choice experiment; Compensating variation; Mixed logit; Benefit-cost analysis \\
 \textbf{JEL Codes:} C35; D61; I12; I18}
 
 
@@ -60,7 +60,7 @@ Economic evaluations have shown that MMC is highly cost-effective when compared 
 
 Discrete choice experiments (DCEs) are increasingly applied in resource-limited settings to value health interventions.\cite{RN287,RN75} They are advantageous over other economic valuation methods because of their ability to identify the characteristics of goods that influence choices,\cite{RN76} and are attractive in settings without readily available revealed preference data. They are also a potentially powerful tool to examine the monetary valuation of policy options for increasing uptake of MMC, and hence a framework for conducting economic evaluations using a benefit-cost framework. The welfare effects of a change in the services on offer can be measured by the compensating variation (CV), which, for the logit family of models, has a closed form.\cite{RN93,RN249} In practice, however, DCEs in health are mostly used to estimate marginal willingness-to-pay for attributes, and the CV is rarely set against the costs of the services that generate it.
 
-We designed a DCE to study the factors that influence the demand for MMC in Uganda. In an earlier version of this paper, we computed the CV for three service delivery policies. Here, we extend that analysis into a formal benefit-cost analysis. We compute the CV for five policies with a model calibrated to the observed uptake of MMC, compare it with the incremental costs of providing the services (including incentive payments) and with the HIV treatment costs averted by additional circumcisions, and characterize the uncertainty in the net benefit of each policy. The analysis is implemented in an interactive application that runs the same model.
+We designed a DCE to study the factors that influence the demand for MMC in Uganda. In an earlier version of this paper, we used it to compute the CV of three service delivery policies. Here we turn that analysis into a formal benefit-cost analysis of five policies. We calibrate the choice model to the observed uptake of MMC, set the CV against the incremental cost of providing the services and incentives and against the HIV treatment costs that additional circumcisions avert, and characterise the uncertainty in the net benefit of each policy. Because men differ in what they want from MMC services, we also repeat the analysis with mixed logit models, which let each man have his own preferences, and show what this heterogeneity, and heterogeneity in the marginal utility of income in particular, does to the benefit-cost analysis.
 
 
 \section{Methods}
@@ -98,16 +98,11 @@ Cost of procedure or amount of incentive payment (US\$)\tnote{b} & $-$12, $-$8, 
 \subsection{Design of the discrete choice experiment}
 We used the pick one format because it was simple to implement, imposed a lower cognitive burden, and mimicked real-life decision-making.\cite{RN70} We used a design with two unlabelled alternatives (circumcision service options 1 and 2) and one labelled alternative, the opt-out (\emph{neither}) option (Figure~\ref{fig:choicetask}). This approach permitted the estimation of unconditional demand and enhanced the conceptual validity of our experiment given that MMC is voluntary. We generated a D-efficient design in \textsf{Ngene} v1.1.2,\cite{RN288} with design restrictions to enhance the plausibility of the choice scenarios.\cite{RN78} In February 2017, we conducted a pilot survey of 40 men and used the parameter estimates from a panel conditional logit model as Bayesian priors for the final design. The final design had 36 choice scenarios in 3 blocks of 12 choice tasks each.
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.78\textwidth]{figures/choice_task.png}
-\caption{An example of the choice task.}\label{fig:choicetask}
-\end{figure}
-
 \subsection{Survey procedures}
 The main survey was conducted between March and April 2017 in Ntenjeru sub-county in Mukono district, which is divided into nine parishes with 111 villages and has a population of about 40,000 people, approximately 50\% of whom are male.\cite{RN270} We randomly selected seven villages for the study and included self-reported heterosexual, uncircumcised, HIV-negative men aged between 18--45 years, who consented to the study. Trained research assistants administered the questionnaire, in Luganda, in private at respondents' homes or workplaces. Before the discrete choice experiment, we provided a verbal explanation of circumcision and a brief animated video describing the procedure of circumcision using devices, and asked respondents to assume all other attributes were the same across choice options. The study was approved by the Institutional Review Boards of the University of Washington and Mbarara University of Science and Technology, and cleared by the Uganda National Council for Science and Technology. All participants provided written consent.
 
-\subsection{Econometric model}
+\subsection{Choice models}
+\subsubsection{Conditional logit}
 The econometric framework follows random utility theory,\cite{RN87} in which utility is a latent construct composed of representative utility and stochastic utility (unobserved to the analyst). Respondent $n$ faced a choice among three alternatives, $j$, in 12 choice scenarios. The indirect utility function is
 \begin{equation}\label{eq:utility}
 U_{nj} = V_{j} + \epsilon_{nj} = x_{j}\boldsymbol{\beta} + \epsilon_{nj},
@@ -118,20 +113,30 @@ V_{j\in\{1,2\}} &= \beta_{permhc} x_{permhc,j} + \beta_{dist5} x_{dist5,j} + \be
  &\quad + \beta_{notpriv} x_{notpriv,j} + \beta_{device} x_{device,j} + \beta_{voucher} x_{voucher,j} + \beta_{cash} x_{cash,j} + \beta_{price}\, x_{price,j}, \label{eq:structural}\\
 V_{3} &= \delta_{neither}. \notag
 \end{align}
-In the base case, a single price coefficient, $\beta_{price}$, applies to out-of-pocket and incentive payments, so that the negative of $\beta_{price}$ is the marginal utility of income, $\lambda$. We estimated this conditional logit (CL) model, which assumes that all individuals have the same vector of utilities, by maximum likelihood, accounting for the panel nature of the data with robust standard errors. In an alternative specification, we allowed the marginal utility of price to depend on whether the option was presented as an out-of-pocket payment, a voucher incentive or a cash incentive (three price coefficients). We compared the two specifications with a likelihood ratio test.
+In the base case, a single price coefficient, $\beta_{price}$, applies to out-of-pocket and incentive payments, so that $\lambda = -\beta_{price}$ is the marginal utility of income. In this conditional logit (CL) model, every man has the same coefficients. We estimated it by maximum likelihood, with standard errors that allow for each man making 12 choices. In an alternative specification, the price coefficient depended on whether the money was an out-of-pocket payment, a voucher incentive or a cash incentive (three price coefficients). We compared the two specifications with a likelihood ratio test.
 
 \subsubsection{Mixed logit}
-To examine heterogeneity in preferences for MMC services, we also estimated panel mixed logit (MIXL) models. Equation~\ref{eq:utility} is re-written to show that each individual has their own utility parameter vector, $\boldsymbol{\beta_n}$, that, we assume, is constant across choice scenarios:
+The conditional logit assumes that all men share the same utility coefficients. To allow for heterogeneity in preferences, we also estimated panel mixed logit models. Equation~\ref{eq:utility} is re-written so that each man has his own vector of coefficients, $\boldsymbol{\beta_n}$, which is constant across his choice scenarios and follows a distribution $f(\boldsymbol{\beta} \mid \Omega)$ in the population:
 \begin{equation}\label{eq:mixl}
 U_{nj} = x_{j}\boldsymbol{\beta_n} + \epsilon_{nj}, \qquad \boldsymbol{\beta_n} \sim f(\boldsymbol{\beta} \mid \Omega).
 \end{equation}
-Conditional on $\boldsymbol{\beta_n}$, the probability of respondent $n$'s sequence of 12 choices, $y_n$, is a product of logit probabilities, $P(y_n \mid \boldsymbol{\beta_n})$, and the unconditional probability is its integral over $f$. The integral has no closed form, so the log-likelihood was approximated by simulation,\cite{RN89}
-\begin{equation}
+Conditional on his coefficients, the probability of man $n$'s sequence of choices, $y_n$, is a product of logit probabilities,
+\begin{equation}\label{eq:pseq}
+P(y_n \mid \boldsymbol{\beta}) = \prod_{t=1}^{12} \frac{e^{x_{n i_{nt} t}\boldsymbol{\beta}}}{\sum_{j=1}^{3} e^{x_{njt}\boldsymbol{\beta}}},
+\end{equation}
+where $i_{nt}$ is the alternative he chose in scenario $t$. The unconditional probability is the integral of equation~\ref{eq:pseq} over $f$. It has no closed form, so we approximated the log-likelihood by simulation,\cite{RN89}
+\begin{equation}\label{eq:sll}
 SLL(\Omega) = \sum_{n=1}^{N} \ln \Bigg[\frac{1}{R}\sum_{r=1}^{R} P(y_n \mid \boldsymbol{\beta}_r)\Bigg],
 \end{equation}
-with $R = \mmcMXdraws$ Modified Latin Hypercube Sampling (MLHS) draws per respondent.\cite{RN265} All utility coefficients other than price were independently normally distributed (no correlations). Because the CV divides by the marginal utility of income, we estimated three specifications of the price coefficient: (1) fixed, so that every man has the same marginal utility of income; (2) negative log-normal, $\beta_{price,n} = -\exp(\mu_{price} + \sigma_{price}\zeta_n)$ with $\zeta_n \sim \mathcal{N}(0,1)$, as in the earlier version of this paper; and (3) censored normal, $\beta_{price,n} = \min(0, \mu_{price} + \sigma_{price}\zeta_n)$, which allows a share of men to be insensitive to price. Each was estimated with one and with three price coefficients. The models were estimated by maximum simulated likelihood with exact gradients and Hessians, from \mmcMXstarts{} starting values per model (the CL estimates, the matching model with one price coefficient, and random starts), and robust standard errors were clustered by respondent.
+with \mmcMXdraws{} modified Latin hypercube draws per man.\cite{RN265}
 
-\subsection{Policy scenarios}
+Apart from the price coefficient, we assumed that the coefficients were independently normally distributed, without correlations. How the price coefficient varies matters a great deal for welfare analysis, because the CV divides by it (Section~\ref{sec:cvmixl}), so we estimated three specifications. In the first, the price coefficient was fixed, so that every man has the same marginal utility of income. In the second, it was negative log-normal, $\beta_{price,n} = -\exp(\mu_{price} + \sigma_{price}\zeta_n)$ with $\zeta_n \sim \mathcal{N}(0,1)$, as in the earlier version of this paper. In the third, it was a censored normal, $\beta_{price,n} = \min(0,\ \mu_{price} + \sigma_{price}\zeta_n)$, which allows some men to ignore price altogether. Each specification was estimated with one and with three price coefficients.
+
+\subsubsection{Estimation}
+All models were estimated in R. We maximised the log-likelihood, or the simulated log-likelihood, with the BFGS algorithm, using exact gradients and Hessians computed with the \textsf{torch} library, and clustered the robust standard errors by respondent. The conditional logit estimates are identical to those of the earlier version of this paper. The simulated log-likelihood of a mixed logit can have more than one local maximum, so each mixed logit was estimated from \mmcMXstartsOne{} starting values: the conditional logit estimates and random starts around them. Models with three price coefficients were also started from the estimates of the corresponding model with one. We report the best of these.
+
+\subsection{Policy analysis}
+\subsubsection{Policy scenarios}
 We examined the potential effects of five policy proposals for MMC demand creation. As was the predominant practice in the study area, the initial state was one in which surgical MMC services were only available at permanent health facilities. We then examined five post-policy states: (1) introduction of outreach services where circumcision was performed by surgical methods; (2) an option of device circumcision at permanent health facilities; (3) introduction of both outreach services and device circumcision; (4) providing cash incentives for device and surgical circumcision at permanent health facilities, assuming a cash incentive equivalent to US\$12 if circumcision was performed using a device, and US\$8 if circumcision was performed surgically; and (5) introduction of outreach services together with cash incentives for device and surgical circumcision at permanent health facilities. The opt-out option was available in both the initial and post-policy states, reflecting the voluntary nature of MMC. Tables~\ref{tab:options} and~\ref{tab:policies} describe the service options by the attributes in our choice experiment, and the options available in each policy.
 
 \begin{table}[!htbp]
@@ -148,7 +153,7 @@ We examined the potential effects of five policy proposals for MMC demand creati
 \adjustbox{max width=\textwidth}{\input{tables/tab_policies.tex}}
 \end{table}
 
-\subsection{Calibration}
+\subsubsection{Predicted uptake and calibration}
 The CL model predicts that \mmcuncalUptake\% of men would choose circumcision if surgical circumcision were only available at permanent health facilities, whereas about \mmcoptoutShare\% of men in the area remain uncircumcised. Following our earlier policy simulations, we added a constant, $\hat{a}$, to the utility of the opt-out option so that the model replicates the observed share of uncircumcised men, $S$, in the initial state, $S_0$:
 \begin{equation}\label{eq:calibration}
 \frac{e^{\delta_{neither} + \hat{a}}}{e^{\delta_{neither} + \hat{a}} + \sum_{k \in S_0 \setminus 0} e^{V_k}} = S
@@ -157,9 +162,9 @@ The CL model predicts that \mmcuncalUptake\% of men would choose circumcision if
 \end{equation}
 With $S = \mmcoptoutShare\%$, $\hat{a} = \mmcaHat$. The same constant applies to every policy. Predicted choice probabilities for the options in a policy, $S_1$, are then given by the logit function, $P_j(S_1) = e^{V_j}/\sum_{k \in S_1} e^{V_k}$.
 
-\subsection{Welfare measure: compensating variation}
-Welfare effects were estimated using the compensating variation (CV), a Hicksian measure of the welfare effects of policy changes. It provides a measure of the value, in monetary terms, associated with a change in policy. With utility linear in income, $U_{nj} = \lambda y_n + V_j + \epsilon_{nj}$, the expected maximum utility from a choice set $S$ is $\lambda y_n + \ln \sum_{j \in S} e^{V_j}$, up to a constant. The CV is the change in income that leaves an individual as well off after the policy change as before:
-\begin{equation}
+\subsubsection{Compensating variation}
+We valued each policy by its compensating variation (CV): the sum of money that could be taken from a man after the policy is introduced and leave him exactly as well off as before. With utility linear in income, $U_{nj} = \lambda y_n + V_j + \epsilon_{nj}$, and Gumbel errors, a man's expected maximum utility from a choice set $S$ is $\lambda y_n + \ln \sum_{j \in S} e^{V_j}$, up to a constant. The CV of a move from the initial choice set $S_0$ to the policy choice set $S_1$ therefore solves
+\begin{equation}\label{eq:cv0}
 \lambda (y_n - CV) + \ln \sum_{j \in S_1} e^{V_j^1} = \lambda y_n + \ln \sum_{j \in S_0} e^{V_j^0}.
 \end{equation}
 Income enters every alternative equally and cancels, giving the log-sum formula of Small and Rosen:\cite{RN93}
@@ -168,18 +173,81 @@ CV = \frac{1}{\lambda}\Bigg[\ln \sum_{j \in S_1} e^{V_j^1} - \ln \sum_{j \in S_0
 \end{equation}
 A positive CV is a welfare gain: the amount an individual would be willing to pay for the new set of services. In the base case, $\lambda = -\beta_{price} = \mmclambda$ per US\$. We computed the CV of each policy relative to the initial state. Because a single price coefficient applies to all payments, an incentive payment of $m$ dollars contributes $\lambda m$ to utility and is valued at exactly $m$ dollars; it therefore cancels against its cost to the payer, as a transfer should in a societal analysis. The utility of receiving a cash or voucher incentive, beyond its money value ($\beta_{cash}$ and $\beta_{voucher}$), does not cancel.
 
-\subsubsection{Compensating variation with preference heterogeneity}
-In the MIXL, each man has his own CV,
+\subsubsection{Compensating variation with a mixed logit}\label{sec:cvmixl}
+In the mixed logit, men differ in their coefficients, so each man has his own CV. Write man $n$'s utility from alternative $j$ as
+\begin{equation}\label{eq:un}
+U_{nj} = \lambda_n y_n + V_{nj} + \epsilon_{nj}, \qquad V_{nj} = x_j\boldsymbol{\beta_n},
+\end{equation}
+where $\lambda_n = -\beta_{price,n}$ is his marginal utility of income. Conditional on $\boldsymbol{\beta_n}$, the errors are Gumbel distributed as before, so his expected maximum utility from a choice set $S$ is
+\begin{equation}\label{eq:emax}
+E\Big[\max_{j \in S} U_{nj} \;\Big|\; \boldsymbol{\beta_n}\Big] = \lambda_n y_n + \ln \sum_{j \in S} e^{V_{nj}} + C,
+\end{equation}
+where $C$ is Euler's constant. His CV for a move from $S_0$ to $S_1$ is the payment that leaves this expectation unchanged:
+\begin{equation}\label{eq:cvn0}
+\lambda_n (y_n - CV_n) + \ln \sum_{j \in S_1} e^{V_{nj}^1} + C = \lambda_n y_n + \ln \sum_{j \in S_0} e^{V_{nj}^0} + C.
+\end{equation}
+Income and the constant cancel, and solving for $CV_n$ gives
 \begin{equation}\label{eq:cvn}
-CV_n = \frac{1}{\lambda_n}\Bigg[\ln \sum_{j \in S_1} e^{x_j^1\boldsymbol{\beta_n}} - \ln \sum_{j \in S_0} e^{x_j^0\boldsymbol{\beta_n}}\Bigg], \qquad \lambda_n = -\beta_{price,n}.
+CV_n = CV(\boldsymbol{\beta_n}) = \frac{1}{\lambda_n}\Bigg[\ln \sum_{j \in S_1} e^{V_{nj}^1} - \ln \sum_{j \in S_0} e^{V_{nj}^0}\Bigg] = \frac{\Delta L(\boldsymbol{\beta_n})}{\lambda_n},
 \end{equation}
-Individual utility parameters are unobserved, but each respondent's choices are informative about them. Using Bayes theorem (see Train\cite{RN89}), the distribution of $\boldsymbol{\beta}$ conditional on respondent $n$'s choices is $h(\boldsymbol{\beta} \mid y_n) \propto P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \hat\Omega)$. We simulated \mmcMXsimMen{} men from $f(\boldsymbol{\beta} \mid \hat\Omega)$, weighted each simulated man, $r$, by the probability of respondent $n$'s choices, $w_{nr} = P(y_n \mid \boldsymbol{\beta}_r) / \sum_s P(y_n \mid \boldsymbol{\beta}_s)$, and computed each respondent's expected CV,
-\begin{equation}\label{eq:cvpost}
-E[CV_n \mid y_n] = \sum_{r} w_{nr}\, CV(\boldsymbol{\beta}_r).
-\end{equation}
-The population was represented by the 406 conditional distributions pooled together. We report the mean CV, which is the average of $E[CV_n \mid y_n]$ over respondents and the relevant measure for a societal benefit-cost analysis; the median CV of the pooled distribution, which describes the typical man; and the share of men whose CV exceeds the incremental cost per man. Uptake and costs were computed from the pooled choice probabilities, and the opt-out constant was calibrated as before, with one shift for all men. In the earlier version of this paper, we computed the CV at each respondent's posterior mean coefficients, $CV(E[\boldsymbol{\beta_n} \mid y_n])$. Because the CV is not linear in the coefficients (it divides by $\lambda_n$), this plug-in estimate differs from $E[CV_n \mid y_n]$, and we report both. As a check, we also computed the unconditional population mean, in which every simulated man counts equally; if the mixing distribution is correctly specified, the two should agree. With a log-normal price coefficient the CV has finite moments but a long right tail; with a censored price coefficient, men whose price coefficient is zero have no finite CV,\cite{DalyHessTrain2012} and they were excluded from the CV summaries (their share is reported).
+where $\Delta L(\boldsymbol{\beta_n})$ is the change in his log-sum, in units of utility. This is equation~\ref{eq:cv} with his own coefficients in place of the common ones.
 
-\subsection{Costs}
+We do not observe $\boldsymbol{\beta_n}$. In the population it follows $f(\boldsymbol{\beta} \mid \Omega)$, so the mean CV in the population is
+\begin{equation}\label{eq:ecv}
+E[CV] = \int CV(\boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta}.
+\end{equation}
+Because $CV(\boldsymbol{\beta})$ is not linear in $\boldsymbol{\beta}$, $E[CV]$ is not the CV at the mean coefficients. In particular, whenever $\lambda$ varies, $E[1/\lambda] > 1/E[\lambda]$ by Jensen's inequality. The integral has no closed form, and with $R$ draws $\boldsymbol{\beta}_r$ from $f(\boldsymbol{\beta} \mid \hat\Omega)$ it is approximated by
+\begin{equation}\label{eq:ecvsim}
+E[CV] \approx \frac{1}{R}\sum_{r=1}^{R} CV(\boldsymbol{\beta}_r).
+\end{equation}
+
+Each man's choices in the survey tell us something about his coefficients. By Bayes' rule, the distribution of $\boldsymbol{\beta}$ among men who made the sequence of choices $y_n$ is\cite{RN89}
+\begin{equation}\label{eq:post}
+h(\boldsymbol{\beta} \mid y_n, \Omega) = \frac{P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)}{P(y_n \mid \Omega)}, \qquad P(y_n \mid \Omega) = \int P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta},
+\end{equation}
+with $P(y_n \mid \boldsymbol{\beta})$ from equation~\ref{eq:pseq}. His expected CV, given his choices, is therefore
+\begin{equation}\label{eq:cvpost}
+E[CV_n \mid y_n] = \int CV(\boldsymbol{\beta})\, h(\boldsymbol{\beta} \mid y_n, \Omega)\, d\boldsymbol{\beta} = \frac{\int CV(\boldsymbol{\beta})\, P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta}}{\int P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta}}.
+\end{equation}
+Using the same $R$ draws in the numerator and the denominator,
+\begin{equation}\label{eq:cvpostsim}
+E[CV_n \mid y_n] \approx \sum_{r=1}^{R} w_{nr}\, CV(\boldsymbol{\beta}_r), \qquad w_{nr} = \frac{P(y_n \mid \boldsymbol{\beta}_r)}{\sum_{s=1}^{R} P(y_n \mid \boldsymbol{\beta}_s)}.
+\end{equation}
+Each simulated man $r$ is weighted by how likely he was to make man $n$'s choices. We used \mmcMXsimMen{} draws.
+
+Averaging over the $N = 406$ men in the survey gives the population figure we report:
+\begin{equation}\label{eq:cvbar}
+\overline{CV} = \frac{1}{N}\sum_{n=1}^{N} E[CV_n \mid y_n] \approx \sum_{r=1}^{R} \omega_r\, CV(\boldsymbol{\beta}_r), \qquad \omega_r = \frac{1}{N}\sum_{n=1}^{N} w_{nr}.
+\end{equation}
+The second form shows that this is equation~\ref{eq:ecvsim} with the equal weights $1/R$ replaced by $\omega_r$. The population is represented by the 406 conditional distributions pooled together. If the model is correctly specified and the sample represents the population, the average of the conditional distributions over the sample is the population distribution, $\frac{1}{N}\sum_n h(\boldsymbol{\beta} \mid y_n, \Omega) \rightarrow f(\boldsymbol{\beta} \mid \Omega)$,\cite{RN89} so $\overline{CV}$ and $E[CV]$ estimate the same quantity. We computed both; a large difference between them would point to a misspecified mixing distribution.
+
+The same weights give the median CV, the value $m$ that solves
+\begin{equation}\label{eq:median}
+\sum_{r=1}^{R} \omega_r\, \mathbf{1}\big[CV(\boldsymbol{\beta}_r) \le m\big] = \frac{1}{2},
+\end{equation}
+and the share of men whose CV exceeds the incremental cost per man, $\Delta C$ (equation~\ref{eq:cost}),
+\begin{equation}\label{eq:gain}
+G = \sum_{r=1}^{R} \omega_r\, \mathbf{1}\big[CV(\boldsymbol{\beta}_r) > \Delta C\big].
+\end{equation}
+Choice probabilities are averaged in the same way, $\bar P_j(S) = \sum_r \omega_r P_j(S \mid \boldsymbol{\beta}_r)$, and take the place of the conditional logit probabilities in equations~\ref{eq:cost} and~\ref{eq:nb}. The opt-out constant is calibrated as in equation~\ref{eq:calibration}, with one shift $\hat a$ for all men, chosen so that $\sum_r \omega_r P_0(S_0 \mid \boldsymbol{\beta}_r, \hat a) = S$.
+
+In the earlier version of this paper, we computed each man's CV at his posterior mean coefficients:
+\begin{equation}\label{eq:plugin}
+CV(\bar{\boldsymbol{\beta}}_n), \qquad \bar{\boldsymbol{\beta}}_n = E[\boldsymbol{\beta} \mid y_n] \approx \sum_{r=1}^{R} w_{nr}\, \boldsymbol{\beta}_r.
+\end{equation}
+Because $CV(\boldsymbol{\beta})$ is not linear in $\boldsymbol{\beta}$, $CV(\bar{\boldsymbol{\beta}}_n)$ is not $E[CV_n \mid y_n]$. When $\lambda$ is fixed, the difference comes only from the log-sum and is usually small. When $\lambda$ varies, $1/\bar\lambda_n$ understates the posterior mean of $1/\lambda$, and the difference can be large. We report this plug-in estimate for comparison.
+
+Finally, the distribution of $\lambda$ decides whether the mean CV is well behaved. From equation~\ref{eq:cvn}, $E[CV] = E[\Delta L(\boldsymbol{\beta})/\lambda]$. With a fixed $\lambda$ this is $E[\Delta L]/\lambda$. Now take a policy that does not change what men pay, such as outreach services or device circumcision. Its $\Delta L$ does not involve the price coefficient, and because the coefficients are independent, $\Delta L$ and $\lambda$ are independent, so that
+\begin{equation}\label{eq:ecvindep}
+E[CV] = E[\Delta L]\; E\Big[\frac{1}{\lambda}\Big].
+\end{equation}
+With a log-normal price coefficient, $\lambda = \exp(\mu + \sigma\zeta)$, so $1/\lambda = \exp(-\mu - \sigma\zeta)$, where $-\mu - \sigma\zeta \sim \mathcal{N}(-\mu, \sigma^2)$. For any $X \sim \mathcal{N}(a, s^2)$, $E[e^X] = e^{a + s^2/2}$, so
+\begin{equation}\label{eq:invlambda}
+E\Big[\frac{1}{\lambda}\Big] = \exp\Big(-\mu + \frac{\sigma^2}{2}\Big) = \frac{1}{\lambda_{med}}\exp\Big(\frac{\sigma^2}{2}\Big),
+\end{equation}
+where $\lambda_{med} = \exp(\mu)$ is the median of $\lambda$. Substituting equation~\ref{eq:invlambda} into equation~\ref{eq:ecvindep}, the mean CV is $E[\Delta L]/\lambda_{med}$, the CV of a man with the median price coefficient, multiplied by $\exp(\sigma^2/2)$. The factor grows quickly with $\sigma$: it is 1.6 at $\sigma = 1$ and 7.4 at $\sigma = 2$. With a censored normal price coefficient, $\lambda = \max(0, -\mu - \sigma\zeta)$, and a share $\Phi(\mu/\sigma)$ of men have $\lambda = 0$. Their CV is unbounded, so $E[CV]$ does not exist.\cite{DalyHessTrain2012} For this specification we report the mean and median CV among men with $\lambda > 0$, and the share with $\lambda = 0$.
+
+\subsubsection{Costs}
 The incremental cost per uncircumcised man of a policy, $S_1$, relative to the initial state is
 \begin{equation}\label{eq:cost}
 \Delta C = \sum_{j \in S_1} P_j(S_1)\,\big(c_j + m_j + d\,\mathbf{1}[m_j > 0]\big) - \sum_{j \in S_0} P_j(S_0)\,(c_j + m_j),
@@ -193,33 +261,33 @@ where $c_j$ is the provider cost per procedure for option $j$, $m_j$ is the ince
 \adjustbox{max width=\textwidth}{\input{tables/tab_costs.tex}}
 \end{table}
 
-\subsection{Averted HIV treatment costs}
+\subsubsection{Averted HIV treatment costs}
 The CV includes the benefits of circumcision as perceived by the man, but not the costs of HIV treatment, which are not borne by him. We therefore estimated the present value of the HIV treatment costs averted by one additional circumcision as
 \begin{equation}\label{eq:tx}
 B_{tx} = \frac{c_{ART}}{k} \sum_{t=d}^{d+L-1} (1+r)^{-t} = \frac{c_{ART}}{k}\,(1+r)^{-d}\,\frac{1 - (1+r)^{-L}}{r},
 \end{equation}
 where $k$ is the number of circumcisions needed to avert one HIV infection (12, for men aged 20--34 in Uganda\cite{Kripke2016}), $c_{ART}$ is the annual cost of antiretroviral therapy (ART), $d$ is the number of years from circumcision until an averted infection would have started ART, $L$ is the number of years on ART, and $r$ is the discount rate (Table~\ref{tab:costs}). With these values, $B_{tx} = \$\mmctxPerMMC$ per additional circumcision.
 
-\subsection{Net benefit}
+\subsubsection{Net benefit}
 The net benefit per uncircumcised man is reported in two ways:
 \begin{equation}\label{eq:nb}
 NB_{CV} = CV - \Delta C, \qquad NB = NB_{CV} + \Delta U \cdot B_{tx},
 \end{equation}
 where $\Delta U = P_{circ}(S_1) - P_{circ}(S_0)$ is the change in the uptake of MMC. The first measures the value of a policy to the men who choose among the services, net of its cost; the second adds the averted HIV treatment costs. Benefits to female partners and others are not included.
 
-\subsection{Uncertainty}
+\subsubsection{Uncertainty}
 We used the Krinsky and Robb method\cite{KrinskyRobb1986} to characterize the uncertainty in the CV and the net benefit due to sampling uncertainty in the utility parameters: we drew 5,000 sets of utility parameters from a multivariate normal distribution with the estimated robust covariance matrix, re-calibrated the opt-out constant and re-computed every policy. Draws with a non-negative price coefficient, for which the CV is undefined, were excluded. In the probabilistic analysis, we also drew each cost input from a beta-PERT distribution over its low, base and high values,
 \begin{equation}
 x = a + (b - a)\,Z, \qquad Z \sim \text{Beta}\Big(1 + 4\,\frac{m - a}{b - a},\; 1 + 4\,\frac{b - m}{b - a}\Big),
 \end{equation}
-where $a$, $m$ and $b$ are the low, base and high values. In one-way sensitivity analyses, each input was set to its low and then its high value while all other inputs were held at the base case: costs to the ranges in Table~\ref{tab:costs}, utility parameters to their 95\% confidence limits, and the calibration share to 60\% and 80\%. We also examined scenarios with the three price coefficients, without calibration, and with incentives valued only at their money value. For the MIXL models with one price coefficient, we drew \mmcMXkr{} sets of means and standard deviations from their robust covariance matrix and re-computed the analysis for the same simulated men.
+where $a$, $m$ and $b$ are the low, base and high values. In one-way sensitivity analyses, each input was set to its low and then its high value while all other inputs were held at the base case: costs to the ranges in Table~\ref{tab:costs}, utility parameters to their 95\% confidence limits, and the calibration share to 60\% and 80\%. We also examined scenarios with the three price coefficients, without calibration, and with incentives valued only at their money value. For the mixed logits with one price coefficient, we drew \mmcMXkr{} sets of means and standard deviations from their robust covariance matrix and repeated the analysis for each, holding the simulated men fixed.
 
-\subsection{Software}
-The model was implemented in R. Utility parameters were estimated in 2018 with the CMC choice modelling code for R, and re-estimated with an R implementation using the \textsf{torch} library, which reproduces them. An interactive application (\url{https://theejonslo.shinyapps.io/mmc-cba/}) runs the same model and allows all inputs to be changed. The choice data needed to estimate the conditional logit models (the choices and the experimental design, with no other information about respondents), the code and the application are available at \url{https://github.com/lubingas/MMC-CBA}.
+\subsection{Data and code}
+The data needed to estimate the models, which are each man's choices and the experimental design and nothing else about the respondents, are available with the code at \url{https://github.com/lubingas/MMC-CBA}. An interactive application that runs the benefit-cost analysis, and in which every input can be changed, is at \url{https://theejonslo.shinyapps.io/mmc-cba/}.
 
 
 \section{Results}
-\subsection{Descriptive summary}
+\subsection{Respondents}
 We interviewed a total of 406 respondents. Respondent characteristics are summarized in Table~\ref{tab:demographics}. The mean (SD) age and years of schooling were 27.0 (6.7) and 7.0 (3.2) years respectively. The median monthly income was US\$26.7. The majority lived in urban areas (64\%), and a half (50\%) were married. Most participants belonged to the Baganda tribe (67\%), were Catholic (48\%), and worked in fishing or fishing related businesses (38\%).
 
 \begin{table}[!htbp]
@@ -255,8 +323,9 @@ Occupation: fishing or fishing related & 154 (38\%) \\
 \end{threeparttable}
 \end{table}
 
-\subsection{Conditional logit}
-Results of the CL models are shown in Table~\ref{tab:cl}. The alternative specific constant representing the \emph{neither} option was negative and statistically significant. Preferences for all the attributes were directionally consistent with our prior hypotheses. In the base-case model, the price coefficient was negative and statistically significant ($-$\mmclambda, robust se \mmclambdaSE). When we allowed the marginal utility of price to depend on the type of payment, the coefficient for out-of-pocket payment was not significant, and the coefficients for voucher and cash payments were. The three price coefficients were not statistically different from each other (likelihood ratio test statistic 0.44, 2 degrees of freedom, $p = 0.80$), and both the AIC and BIC favoured the model with a single price coefficient. In money terms, receiving a cash incentive was worth \$\mmccashConst{} beyond the value of the payment itself, and a voucher \$\mmcvoucherConst.
+\subsection{Model estimates}
+\subsubsection{Conditional logit}
+Table~\ref{tab:cl} shows the conditional logit estimates. The constant for the \emph{neither} option was negative and significant, so that other things being equal men preferred to be circumcised, and every attribute had the expected sign. With one price coefficient, the coefficient on price was $-$\mmclambda{} (robust se \mmclambdaSE). When we let it depend on how the money changed hands, the coefficient on out-of-pocket payments was small and not significant, while those on voucher and cash payments were significant. The three coefficients did not differ from each other (likelihood ratio test 0.44 on 2 degrees of freedom, $p = 0.80$), and both information criteria preferred a single price coefficient, which we use in the base case. Valued at that coefficient, receiving a cash incentive was worth \$\mmccashConst{} to men over and above the money itself, and a voucher \$\mmcvoucherConst.
 
 \begin{table}[!htbp]
 \centering
@@ -270,91 +339,17 @@ Results of the CL models are shown in Table~\ref{tab:cl}. The alternative specif
 \end{threeparttable}
 \end{table}
 
-\subsection{Predicted uptake}
-Predicted choice probabilities are shown in Table~\ref{tab:shares}. In the initial state, \mmcoptoutShare\% of men chose the opt-out by construction. Each policy increased the uptake of MMC, from \mmcPTwoUptakeChange{} percentage points for device circumcision (Policy 2) to \mmcPFiveUptakeChange{} percentage points for cash incentives with outreach services (Policy 5). Outreach services drew men both from the opt-out and from surgical circumcision at permanent health facilities.
+\subsubsection{Mixed logit}
+Letting the coefficients vary across men improved the fit enormously: the log-likelihood rose by about a thousand points (Table~\ref{tab:mixlfit}). Letting the price coefficient vary as well added up to a further \mmcMXgainPrice{} points. The log-normal and censored specifications fitted about equally well, and both better than the fixed one. As with the conditional logit, one price coefficient was enough: in each case, the model with three price coefficients had a higher BIC than the model with one.
 
 \begin{table}[!htbp]
 \centering
-\caption{Predicted choice probabilities and uptake of MMC, by policy.}\label{tab:shares}
-\small
-\adjustbox{max width=\textwidth}{\input{tables/tab_shares.tex}}
-\end{table}
-
-\subsection{Compensating variation, costs and net benefit}
-The CV, incremental costs and net benefits of each policy are shown in Table~\ref{tab:results} and Figures~\ref{fig:cvcost} and~\ref{fig:netbenefit}. The CV ranged from \mmcPTwoCV{} per uncircumcised man for device circumcision to \mmcPFiveCV{} for cash incentives with outreach services. For every policy, the CV was close to the incremental cost. The CV of outreach services (Policy 1: \mmcPOneCV) was lower than their incremental cost (\mmcPOneCost), mainly because surgical circumcision in outreach camps costs nearly twice as much per procedure as at fixed sites; the net benefit based on the CV was positive in only \mmcPOneNBcvP{} of simulations. Device circumcision (Policy 2) had the highest probability of a positive net benefit based on the CV (\mmcPTwoNBcvP), and cash incentives with outreach services (Policy 5) the highest expected value (\mmcPFiveNBcv{} per man). Of the incremental cost of cash incentives (Policy 4: \mmcPFourCost), \mmcPFourTransfers{} was incentive payments.
-
-Including the averted HIV treatment costs, all policies had large positive net benefits, ranging from \mmcPTwoNBtotal{} (Policy 2) to \mmcPFiveNBtotal{} per uncircumcised man (Policy 5). The cost per additional circumcision, including incentive payments, ranged from \$\mmccostPerMMCmin{} to \$\mmccostPerMMCmax{}, against \$\mmctxPerMMC{} in averted treatment costs.
-
-\begin{table}[!htbp]
-\centering
-\caption{Uptake, compensating variation, incremental cost and net benefit per uncircumcised man (2017 US\$). 95\% Krinsky-Robb intervals in brackets.}\label{tab:results}
-\small
-\adjustbox{max width=\textwidth}{\input{tables/tab_results.tex}}
-\end{table}
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_cv_cost.pdf}
-\caption{Compensating variation and incremental cost of each policy, per uncircumcised man, relative to the initial state. Whiskers: 95\% Krinsky-Robb intervals for the CV.}\label{fig:cvcost}
-\end{figure}
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_net_benefit.pdf}
-\caption{Net benefit of each policy per 1,000 uncircumcised men, based on the CV alone (left) and including averted HIV treatment costs (right). Points: base case; lines: 95\% Krinsky-Robb intervals. The two panels are on different scales.}\label{fig:netbenefit}
-\end{figure}
-
-\subsection{Sensitivity analyses}
-In the one-way sensitivity analyses of Policy 5 (Figure~\ref{fig:tornado}), the net benefit based on the CV was most sensitive to the price coefficient (\mmcOWcvTopOneLo{} to \mmcOWcvTopOneHi{} at its 95\% confidence limits), followed by the calibration share and the cost of device circumcision. The net benefit including averted HIV treatment costs was most sensitive to the number of circumcisions needed to avert one infection, the number of years on ART, the discount rate and the annual cost of ART.
-
-Results of the scenario analyses are shown in Table~\ref{tab:scenarios}. Using the cash price coefficient of the model with three price coefficients gave almost the same CVs as the base case, but much wider intervals (Figure~\ref{fig:pricespec}): for cash incentives, \mmcPFourCVthree{} (\mmcPFourCVthreeLo{} to \mmcPFourCVthreeHi), compared with \mmcPFourCV{} (\mmcPFourCVlo{} to \mmcPFourCVhi), and \mmcpctDroppedThree\% of draws had a non-negative price coefficient. Using the voucher price coefficient made every policy's CV lower than its cost; using the out-of-pocket price coefficient made every CV higher. Without calibration, the model predicted that \mmcuncalUptake\% of men would already be circumcised in the initial state; the policies then mainly benefited men who would have been circumcised anyway, and the CVs were two to two and a half times higher. Valuing incentives at their money value only (setting the cash and voucher constants to zero) made the net benefit of both incentive policies negative.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_tornado.pdf}
-\caption{One-way sensitivity analyses for Policy 5 (cash incentives and outreach services), per uncircumcised man: the ten inputs with the largest effects on the net benefit based on the CV (top) and including averted HIV treatment costs (bottom).}\label{fig:tornado}
-\end{figure}
-
-\begin{table}[!htbp]
-\centering
-\caption{Scenario analyses: net benefit based on the CV (CV minus incremental cost) per uncircumcised man (2017 US\$).}\label{tab:scenarios}
-\small
-\input{tables/tab_scenarios.tex}
-\end{table}
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_price_spec.pdf}
-\caption{Compensating variation with one price coefficient (base case) and with the cash price coefficient of the model with three price coefficients. Whiskers: 95\% Krinsky-Robb intervals.}\label{fig:pricespec}
-\end{figure}
-
-\subsection{Probabilistic analysis}
-Results of the probabilistic analysis, in which the utility parameters and costs were drawn together, are shown in Table~\ref{tab:psa} and Figure~\ref{fig:plane}. Based on the CV alone, the probability of a positive net benefit was highest for device circumcision (\mmcPTwoPSAnbcvP) and lowest for outreach services (\mmcPOnePSAnbcvP). Cash incentives with outreach services had the highest net benefit in \mmcPFiveBestCV{} of draws, device circumcision in \mmcPTwoBestCV, and the initial state in \mmcInitBestCV. Including averted HIV treatment costs, cash incentives with outreach services had the highest net benefit in \mmcPFiveBestTotal{} of draws.
-
-\begin{table}[!htbp]
-\centering
-\caption{Probabilistic analysis: net benefit per uncircumcised man (2017 US\$) and the probability that each policy has the highest net benefit (5,000 draws).}\label{tab:psa}
-\small
-\adjustbox{max width=\textwidth}{\input{tables/tab_psa.tex}}
-\end{table}
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.78\textwidth]{figures/fig_bc_plane.pdf}
-\caption{Benefit-cost plane: incremental cost and CV per uncircumcised man in 800 draws of the probabilistic analysis. Above the dashed line, the CV exceeds the incremental cost.}\label{fig:plane}
-\end{figure}
-
-\subsection{Preference heterogeneity}
-The MIXL models fit the data much better than the CL (Table~\ref{tab:mixlfit}): the log-likelihood improved by \mmcMXgainFixed{} points with a fixed price coefficient and by \mmcMXgainLogn{} points with a log-normal one. Allowing the price coefficient to vary improved the fit by a further \mmcMXgainPrice{} points, and the log-normal specification had the lowest BIC. As with the CL, a single price coefficient was preferred: every MIXL with three price coefficients had a higher BIC than the corresponding model with one.
-
-\begin{table}[!htbp]
-\centering
-\caption{Fit of the conditional and mixed logit models (\mmcMXdraws{} draws per respondent).}\label{tab:mixlfit}
+\caption{Fit of the conditional and mixed logit models (\mmcMXdraws{} draws per man).}\label{tab:mixlfit}
 \small
 \adjustbox{max width=\textwidth}{\input{tables/tab_mixl_fit.tex}}
 \end{table}
 
-The standard deviations of the utility coefficients were large, in particular for the \emph{neither} option (\mmcMXneitherSD), permanent health facilities (\mmcMXpermhcSD) and device circumcision (\mmcMXdeviceSD) (Table~\ref{tab:mixlcoef}). With a mean of \mmcMXdeviceMean, an estimated \mmcMXdeviceLike{} of men preferred device to surgical circumcision. With a fixed price coefficient, the marginal utility of income was \mmcMXpriceFixed, about \mmcMXscale{} times the CL estimate, because all coefficients are scaled up when part of the unobserved variation in utility is modelled. When the price coefficient was allowed to vary, most men were much less sensitive to price than the average man: with a log-normal price coefficient, the mean was \mmcMXlognRatio{} times the median (\mmcMXlognMean{} and \mmcMXlognMedian), and with a censored price coefficient, \mmcMXcensZero{} of men had a price coefficient of zero.
+Table~\ref{tab:mixlcoef} shows the estimated distributions. The standard deviations were large compared with the means, most of all for the \emph{neither} option, permanent health facilities and device circumcision. Device circumcision shows the disagreement among men most clearly. The average man disliked it (mean \mmcMXdeviceMean), but with a standard deviation of \mmcMXdeviceSD{} about \mmcMXdeviceLike{} of men preferred it to surgery. With a fixed price coefficient, the marginal utility of income was \mmcMXscale{} times the conditional logit estimate (\mmcMXpriceFixed). This is expected: modelling part of the unobserved variation in utility rescales every coefficient. When the price coefficient was allowed to vary, both specifications put most men well below the average man in their sensitivity to price. Under the log-normal, the mean price coefficient was \mmcMXlognRatio{} times the median, and under the censored normal \mmcMXcensZero{} of men had a price coefficient of zero.
 
 \begin{table}[!htbp]
 \centering
@@ -363,40 +358,74 @@ The standard deviations of the utility coefficients were large, in particular fo
 \adjustbox{max width=\textwidth}{\input{tables/tab_mixl_coef.tex}}
 \end{table}
 
-Results of the benefit-cost analysis with the MIXL and a fixed price coefficient are shown in Table~\ref{tab:mixlbca}. Predicted uptake was \mmcMXuptakeDiffMin{} to \mmcMXuptakeDiffMax{} percentage points lower than with the CL, which reduced the averted HIV treatment costs of cash incentives with outreach services by \mmcMXtxDrop. The mean CVs were close to the CL estimates, and the policies ranked in the same order: for cash incentives with outreach services, the mean CV was \mmcMXPFiveCV{} (95\% CI \mmcMXPFiveCVlo{} to \mmcMXPFiveCVhi), compared with \mmcPFiveCV{} with the CL. The mean CV was lower than the incremental cost for outreach services (\mmcMXPOneNB{} per man) and higher for device circumcision (\mmcMXPTwoNB; 95\% CI \mmcMXPTwoNBlo{} to \mmcMXPTwoNBhi) and cash incentives (\mmcMXPFourNB). For every policy, however, the median CV was well below the mean: for device circumcision, \mmcMXPTwoCVmed{} against a mean of \mmcMXPTwoCV. The share of men whose CV exceeded the incremental cost per man ranged from \mmcMXgainMin{} for outreach services to \mmcMXgainMax{} for cash incentives with outreach services (Figure~\ref{fig:mixlshare}). The mean CV based on the posterior distributions agreed with the unconditional population mean to within \mmcMXpopDiff, and the plug-in CV used in the earlier version of this paper was close to the posterior expected CV (\mmcMXPFivePlugFixed{} for cash incentives with outreach services).
+\subsection{Policy analyses}
+\subsubsection{Uptake}
+Table~\ref{tab:shares} shows the predicted choices under each policy. By construction, \mmcoptoutShare\% of men stayed uncircumcised in the initial state. Every policy raised uptake, from \mmcPTwoUptakeChange{} percentage points for device circumcision to \mmcPFiveUptakeChange{} for cash incentives with outreach services. Outreach services drew men both from the opt-out and from surgery at permanent health facilities.
 
 \begin{table}[!htbp]
 \centering
-\caption{Mixed logit with a fixed price coefficient: uptake, compensating variation, incremental cost and net benefit per uncircumcised man (2017 US\$), averaged over the conditional distributions of the 406 respondents. 95\% Krinsky-Robb intervals in brackets.}\label{tab:mixlbca}
+\caption{Predicted choice probabilities and uptake of MMC, by policy (conditional logit).}\label{tab:shares}
+\small
+\adjustbox{max width=\textwidth}{\input{tables/tab_shares.tex}}
+\end{table}
+
+\subsubsection{Compensating variation, costs and net benefit}
+The central results are in Table~\ref{tab:results} and Figures~\ref{fig:cvcost} and~\ref{fig:netbenefit}. The CV ranged from \mmcPTwoCV{} per uncircumcised man for device circumcision to \mmcPFiveCV{} for cash incentives with outreach services, and for every policy it was close to the incremental cost. The two policies that added outreach services without incentives were worth less to men than they cost. For outreach services alone, the CV was \mmcPOneCV{} against a cost of \mmcPOneCost, mainly because surgery in an outreach camp costs nearly twice as much as at a fixed site, and the CV exceeded the cost in only \mmcPOneNBcvP{} of simulations. Device circumcision was the policy most likely to be worth its cost to men (\mmcPTwoNBcvP{} of simulations), and cash incentives with outreach services had the largest expected net benefit, \mmcPFiveNBcv{} per man. Incentive payments made up \mmcPFourTransfers{} of the \mmcPFourCost{} incremental cost of cash incentives.
+
+Counting the HIV treatment costs averted by additional circumcisions changes the picture. Every policy then had a large positive net benefit, from \mmcPTwoNBtotal{} per uncircumcised man for device circumcision to \mmcPFiveNBtotal{} for cash incentives with outreach services. Each additional circumcision cost between \$\mmccostPerMMCmin{} and \$\mmccostPerMMCmax, incentives included, and averted about \$\mmctxPerMMC{} in treatment costs.
+
+\begin{table}[!htbp]
+\centering
+\caption{Uptake, compensating variation, incremental cost and net benefit per uncircumcised man (conditional logit, 2017 US\$). 95\% Krinsky-Robb intervals in brackets.}\label{tab:results}
+\small
+\adjustbox{max width=\textwidth}{\input{tables/tab_results.tex}}
+\end{table}
+
+\subsubsection{Sensitivity and scenario analyses}
+In the one-way analyses of cash incentives with outreach services (Figure~\ref{fig:tornado}), the net benefit based on the CV was most sensitive to the price coefficient: it ranged from \mmcOWcvTopOneLo{} to \mmcOWcvTopOneHi{} between the coefficient's 95\% confidence limits. The calibration share and the cost of device circumcision came next. Once averted treatment costs were included, the inputs that mattered most were those that determine these costs: the number of circumcisions needed to avert one infection, the years on ART, the discount rate and the annual cost of ART.
+
+The scenario analyses are in Table~\ref{tab:scenarios}. With three price coefficients, using the cash coefficient as the marginal utility of income gave almost the same CVs as the base case, but much wider intervals (Figure~\ref{fig:pricespec}). For cash incentives, the CV was \mmcPFourCVthree{} (\mmcPFourCVthreeLo{} to \mmcPFourCVthreeHi), against \mmcPFourCV{} (\mmcPFourCVlo{} to \mmcPFourCVhi) in the base case, and in \mmcpctDroppedThree\% of the draws the cash coefficient was zero or positive. With the voucher coefficient instead, every policy was worth less than it cost; with the out-of-pocket coefficient, every policy was worth more. Calibration mattered most. Without it, the model predicted that \mmcuncalUptake\% of men would already be circumcised in the initial state, so the new services mostly benefited men who would have been circumcised anyway, and the CVs were two to two and a half times higher. Finally, if men valued incentives only at their money value, so that the cash and voucher constants were zero, neither incentive policy paid for itself.
+
+\begin{table}[!htbp]
+\centering
+\caption{Scenario analyses: net benefit based on the CV (CV minus incremental cost) per uncircumcised man (2017 US\$).}\label{tab:scenarios}
+\small
+\input{tables/tab_scenarios.tex}
+\end{table}
+
+\subsubsection{Probabilistic analysis}
+When the utility parameters and the costs were drawn together (Table~\ref{tab:psa}, Figure~\ref{fig:plane}), device circumcision was again the policy most likely to be worth its cost to men (\mmcPTwoPSAnbcvP{} of draws), and outreach services the least likely (\mmcPOnePSAnbcvP). On the CV alone, cash incentives with outreach services had the highest net benefit in \mmcPFiveBestCV{} of draws, device circumcision in \mmcPTwoBestCV{} and the initial state in \mmcInitBestCV. With averted treatment costs included, cash incentives with outreach services had the highest net benefit in \mmcPFiveBestTotal{} of draws.
+
+\begin{table}[!htbp]
+\centering
+\caption{Probabilistic analysis: net benefit per uncircumcised man (2017 US\$) and the probability that each policy has the highest net benefit (5,000 draws).}\label{tab:psa}
+\small
+\adjustbox{max width=\textwidth}{\input{tables/tab_psa.tex}}
+\end{table}
+
+\subsubsection{Policy analysis with the mixed logit}
+Table~\ref{tab:mixlbca} repeats the benefit-cost analysis with the mixed logit and a fixed price coefficient. The mixed logit predicted lower uptake than the conditional logit, by \mmcMXuptakeDiffMin{} to \mmcMXuptakeDiffMax{} percentage points, so fewer treatment costs were averted; for cash incentives with outreach services, \mmcMXtxDrop{} fewer. The mean CVs of the two incentive policies were close to the conditional logit estimates, but outreach services were worth about half as much (\mmcMXPOneCV{} against \mmcPOneCV) and device circumcision a little more (\mmcMXPTwoCV{} against \mmcPTwoCV). Outreach services were again worth less to men than they cost, and device circumcision and cash incentives again worth more. Outreach services with device circumcision, which was not worth its cost with the conditional logit, now had a small positive net benefit (\mmcMXPThreeNB, interval \mmcMXPThreeNBlo{} to \mmcMXPThreeNBhi). But the mean hides a very uneven distribution. For every policy the median CV was well below the mean: for device circumcision it was \mmcMXPTwoCVmed, against a mean of \mmcMXPTwoCV. Between \mmcMXgainMin{} and \mmcMXgainMax{} of men valued a policy at more than its cost per man (Figure~\ref{fig:mixlshare}), so no policy was worth its cost to most of the men it was offered to. The posterior and unconditional estimates of the mean CV agreed to within \mmcMXpopDiffRest{} for the three policies with the largest CVs, but differed by \mmcMXpopDiffOne{} for outreach services and \mmcMXpopDiffTwo{} for device circumcision, which suggests that normal distributions do not fully describe how preferences for these two services vary. The plug-in estimate used in 2018 was close to the posterior expected CV except for outreach services (\mmcMXPOnePlugFixed{} against \mmcMXPOneCV).
+
+\begin{table}[!htbp]
+\centering
+\caption{Mixed logit with a fixed price coefficient: uptake, compensating variation, incremental cost and net benefit per uncircumcised man (2017 US\$), averaged over the conditional distributions of the 406 men. 95\% Krinsky-Robb intervals in brackets.}\label{tab:mixlbca}
 \small
 \adjustbox{max width=\textwidth}{\input{tables/tab_mixl_bca.tex}}
 \end{table}
 
-The distribution of the price coefficient determined the mean CV, but much less the median (Table~\ref{tab:mixlprice}, Figure~\ref{fig:mixlcv}). With a log-normal price coefficient, the mean CV of cash incentives with outreach services was \mmcMXPFiveCVLogn{} (95\% CI \mmcMXPFiveCVloLogn{} to \mmcMXPFiveCVhiLogn), driven by men with very small price coefficients, while the median, \mmcMXPFiveCVmedLogn, was close to that with a fixed price coefficient. The plug-in estimate used in 2018, \mmcMXPFivePlugLogn, was far below the posterior expected CV. With a censored price coefficient, the mean CV of the men with a finite CV was \mmcMXPFiveCVCens{} and the median \mmcMXPFiveCVmedCens. Across the three specifications, the median CV of cash incentives with outreach services ranged from \mmcMXmedFiveMin{} to \mmcMXmedFiveMax. With three price coefficients, the distribution of the cash price coefficient was poorly determined, and CVs computed with respect to it were unstable.
+When the price coefficient was allowed to vary, the mean CV became unstable (Table~\ref{tab:mixlprice}, Figure~\ref{fig:mixlcv}). With a log-normal price coefficient, the mean CV of cash incentives with outreach services was \mmcMXPFiveCVLogn, with an interval from \mmcMXPFiveCVloLogn{} to \mmcMXPFiveCVhiLogn, carried by the few men who were almost indifferent to price. The median, \mmcMXPFiveCVmedLogn, was of the same order as the CV with a fixed price coefficient. With a censored price coefficient, the mean among men with a finite CV was \mmcMXPFiveCVCens{} and the median \mmcMXPFiveCVmedCens. Across the three specifications, the median CV of this policy stayed between \mmcMXmedFiveMin{} and \mmcMXmedFiveMax. With a log-normal price coefficient, the plug-in estimate fell far short of the posterior expected CV: \mmcMXPFivePlugLogn{} against \mmcMXPFiveCVLogn. With three price coefficients, the distribution of the cash price coefficient was poorly determined, and CVs computed with it were unstable, so we do not report them.
 
 \begin{table}[!htbp]
 \centering
-\caption{Compensating variation per uncircumcised man (2017 US\$) with the conditional logit and with the mixed logit under three distributions of the price coefficient (one price coefficient). Plug-in: the CV at each respondent's posterior mean coefficients, as in the 2018 version of this paper. With a censored price coefficient, men with a price coefficient of zero (\mmcMXcensZero) are excluded.}\label{tab:mixlprice}
+\caption{Compensating variation per uncircumcised man (2017 US\$) with the conditional logit and with the mixed logit under three distributions of the price coefficient (one price coefficient). Plug-in: the CV at each man's posterior mean coefficients, as in the 2018 version of this paper. With a censored price coefficient, the men whose price coefficient is zero (\mmcMXcensZero) are left out.}\label{tab:mixlprice}
 \small
 \adjustbox{max width=\textwidth}{\input{tables/tab_mixl_price.tex}}
 \end{table}
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_mixl_cv.pdf}
-\caption{Mean and median compensating variation with the mixed logit under three distributions of the price coefficient, with the conditional logit CV and the incremental cost per uncircumcised man (one price coefficient; log scale).}\label{fig:mixlcv}
-\end{figure}
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_mixl_share.pdf}
-\caption{Share of men whose compensating variation exceeds the incremental cost per uncircumcised man, by policy and distribution of the price coefficient (men with a finite CV). The dashed line marks half of men.}\label{fig:mixlshare}
-\end{figure}
-
 
 \section{Discussion}
 \subsection{Summary of findings}
-We used a discrete choice experiment to value five MMC service delivery policies in monetary terms and compared these valuations with the costs of providing the services. Respondents had a strong baseline preference for circumcision, preferred permanent health facilities, more weekdays of MMC service availability, and incentives (vouchers and cash). Longer distances to access MMC services, less privacy and device circumcision were associated with disutility. For every policy, the CV was close to the incremental cost of providing the services: outreach services were probably not worth their cost to the men who would use them, while device circumcision and cash incentives had modest positive net benefits. When the HIV treatment costs averted by additional circumcisions were included, all policies had large positive net benefits, the highest for cash incentives with outreach services. Allowing preferences to vary across men did not change these conclusions on average, but showed that the value of every policy was concentrated in a minority of men: fewer than half valued any policy at more than its cost per man.
+We used a discrete choice experiment to value five MMC service delivery policies in money and set these values against the cost of providing the services. Men had a strong baseline preference for circumcision. They preferred permanent health facilities, services available on more days of the week, and incentives, and they disliked longer distances, less privacy and device circumcision. For every policy, the value to men was close to the cost: outreach services were probably not worth their cost to the men who would use them, while device circumcision and cash incentives had modest net benefits. Once the HIV treatment costs averted by additional circumcisions were counted, every policy had a large positive net benefit, the largest for cash incentives with outreach services. Allowing preferences to vary across men changed the conclusion for only one policy, outreach services with device circumcision, which became marginally worth its cost, but it showed that most of the value of each policy went to a minority of men.
 
 \subsection{Interpretation}
 Our choice experiment assessed three policy options that could influence the demand for MMC: service delivery models, the potential introduction of device circumcision, and incentives and potential out-of-pocket cost for circumcision. Of the attributes that characterize service delivery models, permanency of the health facility was the most highly valued. In our qualitative work, the importance of permanent health facilities was driven primarily by fear of procedure-related complications and the need to have readily accessible help. This explains why outreach services, although closer and available more often, increased uptake only moderately, and why their CV was lower than their cost: the average cost of circumcision in surgical outreach camps (\$61 to \$72 in 2012 US\$\cite{RN296}) is nearly twice that at fixed sites.
@@ -406,12 +435,12 @@ Circumcision devices have been promoted for their potential to resolve implement
 The main source of benefit in a societal benefit-cost analysis of MMC is likely to be the HIV treatment costs averted, which are not borne by the men who choose the services and are therefore not reflected in their CV. In our analysis, every additional circumcision averted about \$\mmctxPerMMC{} in treatment costs, many times the cost per additional circumcision. The CV adds a measure of the value of the policies to the men themselves, which captures the intangible (psychological and socio-cultural) costs and benefits of circumcision that are not included in cost-effectiveness analyses.
 
 \subsection{Preference heterogeneity and the value of the policies}
-Preferences for MMC services were highly heterogeneous, and modelling this heterogeneity changed the benefit-cost analysis in three ways. First, it lowered predicted uptake, and with it the treatment costs averted, although every policy still had a large positive net benefit when these were included. Second, the average value of each policy to men was close to that from the CL, but it was concentrated in a minority. Device circumcision is the clearest example: about a third of men preferred the device to surgery, their valuations were high, and they carried the mean, while the typical man valued the option at less than a dollar. For a voluntary service this is not a weakness: the men who value a new service are the men who choose it. But it means that a policy can pass a benefit-cost test while most of the men it is offered to would not pay its cost. The mean CV is the relevant measure for a societal benefit-cost analysis; the median and the share of men who gain more than the cost describe how the benefits are distributed.
+Men in this population disagreed about what they wanted from MMC services, and taking this into account changed the benefit-cost analysis in three ways. It lowered predicted uptake, and with it the treatment costs averted, although every policy still had a large net benefit once those costs were counted. It left the average value of the incentive policies close to the conditional logit estimate and halved that of outreach services, and it showed that the value of every policy was concentrated. Device circumcision is the clearest case: about a third of men preferred the device, their high valuations carried the mean, and the typical man valued the option at well under a dollar. For a voluntary service this is not a weakness, since the men who value a new service are the men who will use it. But it does mean that a policy can pass a benefit-cost test even though most of the men it is offered to would not pay what it costs. The mean CV remains the right measure for a societal benefit-cost analysis; the median and the share of men who gain more than the cost describe how the benefits are shared.
 
-Third, the distribution of the marginal utility of income determined the mean CV. When the price coefficient was allowed to vary, the data indicated that most men were much less sensitive to price than the average, and the mean CV was dominated by men with very small price coefficients, whose CVs are very large. The data cannot pin down this tail: the mean CV with a log-normal price coefficient was an order of magnitude larger than with a fixed one, with a very wide interval, and with a censored price coefficient a majority of men had no finite CV at all. The median was much less sensitive to these assumptions. We therefore used a fixed price coefficient for the base case, as is common in welfare analysis with mixed logit models, and recommend that analyses that allow the marginal utility of income to vary report the median as well as the mean.\cite{DalyHessTrain2012} The plug-in estimate, the CV at each respondent's posterior mean coefficients, agreed with the posterior expected CV when the price coefficient was fixed, but understated it greatly when it was not.
+The third change concerns the marginal utility of income. When it was allowed to vary, the data pointed to most men being far less sensitive to price than the average man, and the mean CV came to be dominated by the few men who were almost indifferent to price. Those men have very large CVs, and the data cannot tell us much about them. The mean CV under a log-normal price coefficient was an order of magnitude larger than with a fixed one, with an interval running into the thousands of dollars, and under a censored price coefficient \mmcMXcensZero{} of men had no finite CV at all. The median moved much less. We therefore used a fixed price coefficient for the base case, as is common in welfare analysis with mixed logits, and we would encourage analysts who let the marginal utility of income vary to report the median CV alongside the mean.\cite{DalyHessTrain2012} The plug-in approach we used in 2018, which evaluates the CV at each man's posterior mean coefficients, came close to the posterior expected CV for most policies when the price coefficient was fixed, but fell far short of it when the price coefficient was log-normal.
 
 \subsection{Comparison with the earlier version of this analysis}
-In the 2018 version of this paper, we reported CL estimates of the CV of \$27.25 for outreach services, \$14.77 for device circumcision and \$44.64 for cash incentives, with respect to the out-of-pocket price coefficient. We reproduced these values (\mmcReproOutreach, \mmcReproDevice{} and \mmcReproCash) by adding the options one at a time to a growing choice set: outreach services to the initial state, device circumcision to the initial state with outreach services, and both cash options to the initial state with outreach services and device circumcision (Table~\ref{tab:repro}, column a). The CVs of device circumcision and cash incentives were therefore increments over the preceding policies, rather than each policy compared with the initial state as described in the text. Comparing each policy with the initial state (column b), using the single price coefficient (column c) and calibrating the model to the observed uptake of MMC (column d) each changed the CV; calibration had the largest effect. In the MIXL, the earlier version used a log-normal price coefficient and summarized the plug-in CVs of the respondents by their median, which, as our results show, is much less sensitive to the distribution of the price coefficient than the mean.
+In the 2018 version of this paper, we reported conditional logit CVs of \$27.25 for outreach services, \$14.77 for device circumcision and \$44.64 for cash incentives, with respect to the out-of-pocket price coefficient. We could reproduce these values (\mmcReproOutreach, \mmcReproDevice{} and \mmcReproCash) only by adding the options one at a time to a growing choice set: outreach services to the initial state, then device circumcision, then both cash options (Table~\ref{tab:repro}, column a). The CVs of device circumcision and cash incentives were therefore increments over the preceding policies, not comparisons with the initial state as the text described. Comparing each policy with the initial state (column b), using a single price coefficient (column c) and calibrating the model to observed uptake (column d) each changed the CV, and calibration changed it most. For the mixed logit, the earlier version used a log-normal price coefficient and summarised the plug-in CVs of the respondents by their median, which, as our results show, is much less sensitive to the distribution of the price coefficient than the mean.
 
 \begin{table}[!htbp]
 \centering
@@ -424,14 +453,14 @@ In the 2018 version of this paper, we reported CL estimates of the CV of \$27.25
 \subsection{Strengths and limitations}
 We followed best practices for the development of choice experimental surveys,\cite{RN69,RN76} including the identification of relevant attributes and attribute levels using qualitative methods. Our findings should be interpreted in light of some limitations. Our sample was drawn from a single sub-county in Uganda, potentially limiting the generalizability of our findings. The length of the survey and complex nature of the questions likely imposed a high cognitive burden on the respondents and may have induced non-compensatory heuristics in evaluating the choice tasks.\cite{RN280,RN278} Preferences in stated choice experiments may not reflect actual preferences in real life,\cite{RN286} and the CV measures what men stated they would trade in hypothetical choices.
 
-Our MIXL models allowed the utility coefficients to vary independently; correlations between them, and the latent class models of the earlier version, were not re-estimated here. The mean CV from the MIXL depends on the assumed distribution of the marginal utility of income, which the data could not determine; we report results under three distributions and the median alongside the mean. The costs were obtained from studies in other districts in 2012, from the provider's perspective; the travel and time costs borne by men are reflected in their CV rather than in the costs. The averted treatment costs were based on national estimates; the incidence of HIV is higher in fishing communities, which would reduce the number of circumcisions needed to avert one infection and increase the averted costs. Finally, the observed share of uncircumcised men used for calibration determines the level of the CV, and was itself uncertain.
+Our mixed logits let the coefficients vary independently; we did not model correlations between them, and did not re-estimate the latent class models of the earlier version. The mean CV from the mixed logit depends on the distribution assumed for the marginal utility of income, which the data could not pin down, so we report results under three distributions and give the median alongside the mean. The simulated likelihood had several local maxima, and for \mmcMXsingleBest{} of the six mixed logits the best value was reached from only one of the starting values, so better maxima may exist. The costs were obtained from studies in other districts in 2012, from the provider's perspective; the travel and time costs borne by men are reflected in their CV rather than in the costs. The averted treatment costs were based on national estimates; the incidence of HIV is higher in fishing communities, which would reduce the number of circumcisions needed to avert one infection and increase the averted costs. Finally, the observed share of uncircumcised men used for calibration determines the level of the CV, and was itself uncertain.
 
 \subsection{Implications for policy}
-Our study suggests that, where resources are limited, policymakers should continue to prioritize the provision of MMC services at permanent health facilities, using surgical methods of circumcision. Offering device circumcision alongside surgical circumcision at permanent health facilities is likely to be worth its cost. Although controversial for a voluntary procedure, policymakers should also consider the use of cash incentives to increase the utilization of MMC services: the projections in our policy analysis are based on modest \$12 and \$8 cash incentives for device and surgical circumcision respectively, and, including the HIV treatment costs averted, they had the highest net benefit of all the policies we examined. Outreach services are unlikely to be worth their cost to the men who would use them, unless their cost per procedure can be reduced, but may still be justified by the treatment costs they avert. Because the value of each policy is concentrated in a minority of men, policies that let men choose among services, rather than replace one service with another, are likely to deliver most of the benefit.
+Our study suggests that, where resources are limited, policymakers should continue to prioritize the provision of MMC services at permanent health facilities, using surgical methods of circumcision. Offering device circumcision alongside surgical circumcision at permanent health facilities is likely to be worth its cost. Although controversial for a voluntary procedure, policymakers should also consider the use of cash incentives to increase the utilization of MMC services: the projections in our policy analysis are based on modest \$12 and \$8 cash incentives for device and surgical circumcision respectively, and, including the HIV treatment costs averted, they had the highest net benefit of all the policies we examined. Outreach services are unlikely to be worth their cost to the men who would use them, unless their cost per procedure can be reduced, but may still be justified by the treatment costs they avert. Because the value of each policy is concentrated in a minority of men, policies that widen men's choice of services, rather than replace one service with another, are likely to capture more of it.
 
 
 \section{Conclusion}
-Discrete choice experiments can provide the benefit side of a formal benefit-cost analysis of MMC demand creation strategies. The compensating variation measures the value of service delivery policies to the men who choose among them, and can be set against the costs of providing the services and the HIV treatment costs they avert. Two methodological choices matter: the marginal utility of income must be precisely estimated, which favours a single price coefficient where the data support it, and the model should be calibrated to the observed uptake of MMC. In this population, cash incentives and device circumcision at permanent health facilities had positive net benefits based on the CV alone, and all policies had positive net benefits when averted treatment costs were included. Allowing for preference heterogeneity did not change these conclusions on average, but showed that the benefits were concentrated in a minority of men, and that the mean CV is reliable only when the marginal utility of income is well determined; the median and the share of men who gain more than the cost should be reported alongside it.
+Discrete choice experiments can supply the benefit side of a formal benefit-cost analysis of MMC demand creation. The compensating variation measures what a set of services is worth to the men who choose among them, and it can be set against the cost of providing the services and the HIV treatment costs they avert. Two choices matter a great deal. The marginal utility of income has to be estimated precisely, which favours a single price coefficient where the data allow it, and the model has to be calibrated to observed uptake. In this population, cash incentives and device circumcision at permanent health facilities were worth more to men than they cost, and every policy had a large positive net benefit once averted treatment costs were counted. Allowing preferences to vary across men left these conclusions largely intact, but it showed that the benefits went mainly to a minority, and that the mean CV can be trusted only when the marginal utility of income is well determined.
 
 
 \section*{Acknowledgements}
@@ -439,5 +468,61 @@ This research was funded in part by a 2015 developmental grant from the Universi
 
 \bibliographystyle{myunsrtnat}
 \bibliography{working_papers,additions}
+
+
+% ---- Figures, at the end of the paper, numbered by the section that refers to them
+\clearpage
+\section*{Figures}
+\setcounter{section}{2}\setcounter{figure}{0}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/choice_task.png}
+\caption{An example of a choice task.}\label{fig:choicetask}
+\end{figure}
+
+\setcounter{section}{3}\setcounter{figure}{0}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_cv_cost.pdf}
+\caption{Compensating variation and incremental cost of each policy per uncircumcised man, compared with the initial state (conditional logit). Whiskers: 95\% Krinsky-Robb intervals for the CV.}\label{fig:cvcost}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_net_benefit.pdf}
+\caption{Net benefit of each policy per 1,000 uncircumcised men, based on the CV alone (left) and including averted HIV treatment costs (right). Points: base case; lines: 95\% Krinsky-Robb intervals. The two panels have different scales.}\label{fig:netbenefit}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_tornado.pdf}
+\caption{One-way sensitivity analyses for cash incentives with outreach services, per uncircumcised man: the ten inputs with the largest effect on the net benefit based on the CV (top) and on the net benefit including averted HIV treatment costs (bottom).}\label{fig:tornado}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_price_spec.pdf}
+\caption{Compensating variation with one price coefficient (base case) and with the cash price coefficient of the model with three price coefficients. Whiskers: 95\% Krinsky-Robb intervals.}\label{fig:pricespec}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/fig_bc_plane.pdf}
+\caption{Benefit-cost plane: incremental cost and CV per uncircumcised man in 800 draws of the probabilistic analysis. Above the dashed line, the CV exceeds the incremental cost.}\label{fig:plane}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_mixl_share.pdf}
+\caption{Share of men whose compensating variation exceeds the incremental cost per uncircumcised man, by policy and distribution of the price coefficient (mixed logit, men with a finite CV). The dashed line marks half of men.}\label{fig:mixlshare}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_mixl_cv.pdf}
+\caption{Mean and median compensating variation with the mixed logit under three distributions of the price coefficient, with the conditional logit CV and the incremental cost per uncircumcised man (one price coefficient; log scale).}\label{fig:mixlcv}
+\end{figure}
 
 \end{document}

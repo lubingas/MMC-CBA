@@ -329,7 +329,9 @@ for (sp in names(specs)) {
   mac(paste0("MXgain", sp), num(f$LL_gain_over_CL, 0))
   mac(paste0("MXllThree", sp), num(f3$LL, 1)); mac(paste0("MXbicThree", sp), num(f3$BIC, 1))
 }
-mac("MXgainPrice", num(fs(specs[["Logn"]])$LL - fs(specs[["Fixed"]])$LL, 0))
+mac("MXgainPrice", num(max(fs(specs[["Logn"]])$LL, fs(specs[["Cens"]])$LL) - fs(specs[["Fixed"]])$LL, 0))
+mac("MXsingleBest", sum(fitsum$starts_at_best[startsWith(fitsum$model, "mixl_")] == 1))
+mac("MXstartsOne", fs(specs[["Fixed"]])$starts)
 dF <- mxd$Fixed; dL <- mxd$Logn; dC <- mxd$Cens
 mac("MXpriceFixed", num(co(dF, "price", "mean"), 4))
 mac("MXscale", num(co(dF, "price", "mean") / m1$beta[["price"]], 1))
@@ -365,7 +367,9 @@ mac("MXtxDrop", pct(1 - fx$tx_savings[5] / cl$tx_savings[5]))
 mac("MXgainMin", pct(min(fx$share_cv_above_cost))); mac("MXgainMax", pct(max(fx$share_cv_above_cost)))
 med5 <- sapply(specs, function(m) mxr(m, ids[5])$cv_median)
 mac("MXmedFiveMin", dol(min(med5))); mac("MXmedFiveMax", dol(max(med5)))
-mac("MXpopDiff", pct(max(abs(fx$population_cv_mean / fx$cv_mean - 1))))
+popdiff <- abs(fx$population_cv_mean / fx$cv_mean - 1)    # fx rows are policies 1 to 5
+mac("MXpopDiff", pct(max(popdiff)))
+mac("MXpopDiffOne", pct(popdiff[1])); mac("MXpopDiffTwo", pct(popdiff[2])); mac("MXpopDiffRest", pct(max(popdiff[3:5])))
 writeLines(sprintf("\\newcommand{\\mmc%s}{%s}", names(macros), unlist(macros)), "paper/numbers.tex")
 
 # tables
