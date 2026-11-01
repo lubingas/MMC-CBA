@@ -159,3 +159,52 @@ ProbBestPlot <- function(pb) {
               xaxis = axis_style("Share of draws in which it is best", tickformat = ".0%", range = c(0, 1.02)),
               margin = list(l = 8, r = 12, t = 8, b = 8))
 }
+
+# Mixed logit: mean and median CV per policy, with the conditional logit CV and the
+# incremental cost. Log scale when every value is positive (the means under a
+# log-normal price coefficient are far above the medians), linear otherwise.
+MixlCVPlot <- function(s, cl_cv) {
+  s$cl_cv <- cl_cv
+  vals <- c(s$cv_mean, s$cv_median, s$cl_cv, s$total_cost, s$cv_mean_lo, s$cv_mean_hi)
+  logx <- all(is.na(vals) | vals > 0)
+  hv <- function(what, v) paste0("<b>", s$label, "</b><br>", what, ": ", fmt_usd(v))
+  has_kr <- "cv_mean_lo" %in% names(s)
+  p <- plot_ly(s, y = ~label) |>
+    add_trace(type = "scatter", mode = "markers", x = ~total_cost, name = "Incremental cost",
+              marker = list(symbol = "line-ns-open", size = 16, color = measure_cols[["cost"]], line = list(width = 3)),
+              hovertext = ~hv("Incremental cost", total_cost), hoverinfo = "text") |>
+    add_trace(type = "scatter", mode = "markers", x = ~cl_cv, name = "Conditional logit CV",
+              marker = list(symbol = "x-thin-open", size = 10, color = "#6c7a80", line = list(width = 2)),
+              hovertext = ~hv("Conditional logit CV", cl_cv), hoverinfo = "text") |>
+    add_trace(type = "scatter", mode = "markers", x = ~cv_median, name = "Median CV",
+              marker = list(symbol = "circle-open", size = 11, color = measure_cols[["cv"]], line = list(width = 2)),
+              hovertext = ~hv("Median CV", cv_median), hoverinfo = "text") |>
+    add_trace(type = "scatter", mode = "markers", x = ~cv_mean, name = "Mean CV",
+              marker = list(symbol = "circle", size = 11, color = measure_cols[["cv"]]),
+              error_x = if (has_kr) list(type = "data", symmetric = FALSE, array = s$cv_mean_hi - s$cv_mean,
+                                         arrayminus = s$cv_mean - s$cv_mean_lo, color = measure_cols[["cv"]],
+                                         thickness = 1.3, width = 4),
+              hovertext = ~hv("Mean CV", cv_mean), hoverinfo = "text")
+  plot_base(p, xaxis = c(axis_style(paste0("US$ (2017) per man", if (logx) ", log scale" else ""), tickprefix = "$",
+                                    tickformat = ",.2~f"), if (logx) list(type = "log")),
+            yaxis = y_policies(s$label), margin = list(l = 8, r = 12, t = 8, b = 8))
+}
+
+# Mixed logit: share of men whose CV exceeds the incremental cost per man, for each
+# distribution of the price coefficient
+MixlSharePlot <- function(d) {
+  dist_cols <- c("#0072B2", "#E69F00", "#009E73")
+  p <- plot_ly()
+  for (i in rev(seq_along(levels(d$spec)))) {        # plotly stacks a group from the bottom up
+    x <- d[d$spec == levels(d$spec)[i], ]
+    p <- add_trace(p, data = x, type = "bar", orientation = "h", y = ~label, x = ~share, name = levels(d$spec)[i],
+                   marker = list(color = dist_cols[i]), textposition = "none", hoverinfo = "text",
+                   hovertext = ~paste0("<b>", label, "</b><br>", spec, ": ", fmt_pct(share)))
+  }
+  plot_base(p, barmode = "group", bargap = 0.28,
+            xaxis = axis_style("Share of men whose CV exceeds the cost per man", tickformat = ".0%", range = c(0, 1)),
+            yaxis = y_policies(unique(d$label)), margin = list(l = 8, r = 12, t = 8, b = 8),
+            shapes = list(list(type = "line", x0 = 0.5, x1 = 0.5, y0 = 0, y1 = 1, yref = "paper",
+                               line = list(color = "#8f9a9e", dash = "dash", width = 1.2)))) |>
+    layout(legend = list(traceorder = "reversed"))      # legend in the order of the bars, fixed first
+}

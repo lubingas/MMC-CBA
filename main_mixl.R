@@ -50,6 +50,19 @@ mixl_kr <- lapply(mixl_fits[grepl("one_price", names(mixl_fits))], function(f) {
 })
 
 
+## the app's copy: the one-price models, with the weights of the simulated men in
+## the base case and in every Krinsky-Robb draw (they depend only on the estimates
+## and the survey choices), so the app can redo the analysis for any inputs
+app_labels <- c(mixl_one_price_slope_fixed = "Price coefficient fixed",
+                mixl_one_price_slope_lognormal = "Price coefficient log-normal",
+                mixl_one_price_slope_censored = "Price coefficient censored at zero")
+mixl_app <- lapply(setNames(names(mixl_kr), names(mixl_kr)), function(m)
+  mixlAppModel(mixl_fits[[m]]$posterior, mixl_kr[[m]], app_labels[[m]],
+               read.csv(file.path("estimation", "output", sprintf("%s_R%d_seed%d_distribution.csv", m, EST_DRAWS, EST_SEED)))))
+saveRDS(list(models = mixl_app, est_draws = EST_DRAWS, sim_men = SIM_MEN, kr_sims = KR_SIMS),
+        "data/mixl_app.rds", compress = "xz")
+
+
 ## TABLES
 # stack tables that do not all have the same columns
 bindFill <- function(l) {

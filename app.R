@@ -16,6 +16,9 @@ source("app/editors.R", local = TRUE)
 
 published <- read_inputs("data/cba_inputs.xlsx")
 KR_DRAWS <- 2000      # preference draws behind the intervals on the Results page
+mixl_app <- readRDS("data/mixl_app.rds")   # mixed logits with stored weights for the simulated men (main_mixl.R)
+mixl_short <- c(mixl_one_price_slope_fixed = "Price fixed (base case)", mixl_one_price_slope_lognormal = "Log-normal price",
+                mixl_one_price_slope_censored = "Censored price")
 
 rt_theme <- reactableTheme(
   color = ui_ink$primary, backgroundColor = "transparent", borderColor = "#e4e0d5",
@@ -50,7 +53,8 @@ overview_panel <- nav_panel(
             "uncircumcised. For each policy, the model predicts the uptake of MMC, the CV and the incremental cost, including ",
             "incentive payments."),
           p(class = "small-print",
-            "This is an illustrative analysis. Utility parameters are from the conditional logit model; costs are from ",
+            "This is an illustrative analysis. Utility parameters are from the conditional logit model; the ",
+            actionLink("goto_mixl", "Mixed logit"), " page lets each man have his own preferences. Costs are from ",
             "published Ugandan studies, and some inputs are assumptions. ", actionLink("goto_method", "How the model works."),
             " All inputs can be changed on the Inputs page. ",
             tags$a(href = "working_paper.pdf", target = "_blank", rel = "noopener", "Working paper (PDF).")))),
@@ -78,6 +82,27 @@ results_panel <- nav_panel(
        card_header(h2("Net benefit"),
                    p(class = "card-sub", "Points: base case. Lines: 95% Krinsky-Robb intervals. The two panels are on different scales.")),
        card_body(uiOutput("res_nb_ui")))
+)
+
+mixl_panel <- nav_panel(
+  "Mixed logit", value = "mixl",
+  div(class = "page-head",
+      div(h1("Mixed logit: men differ in what they want"), uiOutput("mx_sub")),
+      div(class = "seg", radioButtons("mx_model", NULL, inline = TRUE,
+                                      choices = setNames(names(mixl_short), mixl_short)))),
+  uiOutput("mx_note"),
+  card(card_body(div(style = "overflow-x: auto;", reactableOutput("tbl_mixl"))),
+       card_footer(div(class = "kr-row",
+                       actionButton("mx_kr_run", "Add 95% intervals", class = "btn-outline-secondary btn-sm"),
+                       uiOutput("mx_kr_note", inline = TRUE)))),
+  layout_columns(
+    col_widths = breakpoints(sm = 12, lg = c(7, 5)), class = "mt-3",
+    card(card_header(h2("Mean and median CV"),
+                     p(class = "card-sub", "Per uncircumcised man, 2017 US$, with the conditional logit CV and the incremental cost")),
+         card_body(uiOutput("mx_cv_ui"))),
+    card(card_header(h2("Who values each policy at more than its cost"),
+                     p(class = "card-sub", "Share of men whose CV exceeds the incremental cost per man, under each distribution of the price coefficient")),
+         card_body(uiOutput("mx_share_ui"))))
 )
 
 oneway_panel <- nav_panel(
@@ -165,7 +190,14 @@ inputs_panel <- nav_panel(
                          "The base case, 69.2%, is 1 \u2212 2050/6663, as in the policy simulations."),
                        numericInput("set_pop", "Population for the per-population results (uncircumcised men)",
                                     value = published$settings$population, min = 1, step = 100, width = "320px")))),
-              card(class = "mt-3", card_header(h3("Conditional logit estimates in use")), card_body(reactableOutput("tbl_coefs")))))
+              card(class = "mt-3", card_header(h3("Conditional logit estimates in use")), card_body(reactableOutput("tbl_coefs"))),
+              card(class = "mt-3",
+                   card_header(h3("Mixed logit estimates"),
+                               p(class = "card-sub", "Used on the Mixed logit page. Means and standard deviations (SD) of each coefficient across men, ",
+                                 "with robust standard errors; estimated by simulated maximum likelihood with 3,000 draws per man. These are fixed.")),
+                   card_body(div(class = "seg", style = "margin-bottom: 0.8rem;",
+                                 radioButtons("mx_est_model", NULL, inline = TRUE, choices = setNames(names(mixl_short), mixl_short))),
+                             div(style = "overflow-x: auto;", reactableOutput("tbl_mx_coefs"))))))
 )
 
 method_panel <- nav_panel("How it works", value = "method", uiOutput("method_body"))
@@ -182,7 +214,7 @@ ui <- page_navbar(
               tags$link(rel = "icon", type = "image/svg+xml", href = "favicon.svg"),
               tags$meta(name = "description", content = "Benefit-cost analysis of medical male circumcision (MMC) service delivery policies in Uganda, with benefits valued by the compensating variation from a discrete choice experiment.")),
     uiOutput("verdict")),
-  overview_panel, results_panel, oneway_panel, psa_panel, inputs_panel, method_panel,
+  overview_panel, results_panel, mixl_panel, oneway_panel, psa_panel, inputs_panel, method_panel,
   footer = div(class = "app-footer",
                p("Discrete choice experiment among 406 uncircumcised men in Ntenjeru sub-county, Mukono district, Uganda (March\u2013April 2017). ",
                  "Solomon J. Lubinga. An illustrative analysis; see the ",
@@ -233,6 +265,7 @@ server <- function(input, output, session) {
   })
   observeEvent(input$goto_inputs, nav_select("nav", "inputs"))
   observeEvent(input$goto_method, nav_select("nav", "method"))
+  observeEvent(input$goto_mixl, nav_select("nav", "mixl"))
 
   # ── Overview ───────────────────────────────────────────────────────────────
   output$policy_cards <- renderUI({
@@ -341,6 +374,115 @@ server <- function(input, output, session) {
     plotlyOutput("res_nb", height = paste0(if (narrow("res_nb")) 2 * (80 + 52 * n) else 110 + 62 * n, "px"))
   })
   output$res_nb <- renderPlotly(NetBenefitPlot(tab(), per(), narrow("res_nb")))
+
+  # ── Mixed logit ────────────────────────────────────────────────────────────
+  # the three price distributions, recomputed for the current inputs with the
+  # stored weights of the simulated men; Krinsky-Robb intervals on request
+  mx_costs <- reactive(getCosts(rv$inputs$costs, rv$inputs$cpi, rv$inputs$settings$price_year))
+  mx_all <- reactive({
+    bc()                                          # stop here, with the message, if the inputs can't run
+    lapply(mixl_app$models, function(m) RunMixlApp(m, rv$inputs, mx_costs(), rv$inputs$settings$optout_share))
+  })
+  mx_id <- reactive(input$mx_model %||% names(mixl_app$models)[1])
+  mx_kr_store <- reactiveValues()
+  observeEvent(input$mx_kr_run, {
+    id <- mx_id()
+    res <- withProgress(message = "Krinsky-Robb draws", detail = "about 10 seconds", value = 0.5,
+                        tryCatch(RunMixlAppKR(mixl_app$models[[id]], rv$inputs, mx_costs(), rv$inputs$settings$optout_share),
+                                 error = function(e) e))
+    if (inherits(res, "error")) return(showNotification(paste("The intervals stopped:", conditionMessage(res)), type = "error"))
+    mx_kr_store[[id]] <- list(inputs = rv$inputs, kr = res)
+  })
+  mx_kr <- reactive({ k <- mx_kr_store[[mx_id()]]; if (!is.null(k) && identical(k$inputs, rv$inputs)) k$kr })
+  mx_tab <- reactive({
+    s <- mx_all()[[mx_id()]]$summary; k <- mx_kr()
+    if (!is.null(k)) for (v in names(k)) {
+      q <- apply(k[[v]], 2, quantile, c(0.025, 0.975), na.rm = TRUE)
+      s[[paste0(v, "_lo")]] <- q[1, ]; s[[paste0(v, "_hi")]] <- q[2, ]
+    }
+    s
+  })
+  output$mx_sub <- renderUI({
+    p(class = "page-sub", sprintf("Each man has his own utility coefficients. %s of men stay uncircumcised under the initial policy; 2017 US$, per uncircumcised man.",
+                                  fmt_pct(rv$inputs$settings$optout_share, 1)))
+  })
+  output$mx_note <- renderUI({
+    id <- mx_id(); s <- mx_all()[[id]]$summary
+    switch(id,
+      mixl_one_price_slope_fixed = div(class = "note",
+        "Every man has the same marginal utility of income, so the mean CV is well determined. The coefficients of the services ",
+        "vary across men, so the median man values each policy far less than the average man."),
+      mixl_one_price_slope_lognormal = div(class = "note note-caution",
+        "The price coefficient varies across men. A few men are almost indifferent to price, so their CVs are very large and ",
+        "they dominate the mean. The median is the more stable summary."),
+      mixl_one_price_slope_censored = div(class = "note note-caution",
+        sprintf("The price coefficient is zero for %s of men. Their CV has no upper bound, so they are left out of the CV, its median and the share gaining; uptake and costs include everyone.",
+                fmt_pct(s$share_price_zero[1]))))
+  })
+  output$mx_kr_note <- renderUI({
+    if (!is.null(mx_kr())) return(tags$span(class = "kr-text", sprintf("Intervals: 95%% Krinsky-Robb, %d draws of the means and SDs from their robust covariance matrix, costs fixed.",
+                                                                       nrow(mixl_app$models[[mx_id()]]$kr_pars))))
+    tags$span(class = "kr-text", "Krinsky-Robb intervals: 200 draws of the means and SDs from their robust covariance matrix, with costs fixed. About 10 seconds.")
+  })
+  output$tbl_mixl <- renderReactable({
+    t <- mx_tab(); cols <- pcols(); b <- bc(); kr <- "cv_mean_lo" %in% names(t)
+    ivl <- function(lo, hi, i) if (kr) paste0(fmt_usd(lo[i]), " to ", fmt_usd(hi[i])) else NULL
+    df <- t[, c("policy", "label", "uptake", "cv_mean", "cv_median", "total_cost", "nb_mean", "share_cv_above_cost", "nb_total_mean")]
+    reactable(
+      df, theme = rt_theme, sortable = FALSE,
+      columns = list(
+        policy = colDef(show = FALSE),
+        label = colDef(name = "Policy", minWidth = 190, sticky = "left", cell = function(value, index) policy_tag(value, cols[[t$policy[index]]])),
+        uptake = colDef(name = "Uptake of MMC", minWidth = 105,
+                        cell = function(value, index) sub_line(fmt_pct(value, 1),
+                                                               sprintf("%s%s points", if (t$uptake_change[index] >= 0) "+" else minus,
+                                                                       formatC(abs(100 * t$uptake_change[index]), format = "f", digits = 1)))),
+        cv_mean = colDef(name = "Mean CV", minWidth = 130,
+                         cell = function(value, index) sub_line(fmt_usd(value), ivl(t$cv_mean_lo, t$cv_mean_hi, index))),
+        cv_median = colDef(name = "Median CV", minWidth = 95, cell = function(value) fmt_usd(value)),
+        total_cost = colDef(name = "Incremental cost", minWidth = 115,
+                            cell = function(value, index) sub_line(fmt_usd(value), if (t$transfers[index] != 0) paste(fmt_usd(t$transfers[index]), "incentives") else "services only")),
+        nb_mean = colDef(name = "Mean CV minus cost", minWidth = 135,
+                         cell = function(value, index) sub_line(tags$span(class = if (value < 0) "neg" else "pos", fmt_usd(value)),
+                                                                ivl(t$nb_mean_lo, t$nb_mean_hi, index))),
+        share_cv_above_cost = colDef(name = "Men with CV above cost", minWidth = 115,
+                                     cell = function(value, index) sub_line(fmt_pct(value),
+                                                                            if (kr) paste0(fmt_pct(t$share_cv_above_cost_lo[index]), " to ", fmt_pct(t$share_cv_above_cost_hi[index])))),
+        nb_total_mean = colDef(name = "Net benefit, incl. averted ART", minWidth = 145,
+                               cell = function(value, index) sub_line(tags$strong(fmt_usd(value)), ivl(t$nb_total_mean_lo, t$nb_total_mean_hi, index)))))
+  })
+  output$mx_cv_ui <- renderUI(plotlyOutput("mx_cv", height = paste0(120 + 62 * (nrow(pol()) - 1), "px")))
+  output$mx_cv <- renderPlotly({
+    s <- mx_tab(); b <- bc()
+    MixlCVPlot(s, b$cv[1, s$policy])
+  })
+  output$mx_share_ui <- renderUI(plotlyOutput("mx_share", height = paste0(120 + 70 * (nrow(pol()) - 1), "px")))
+  output$mx_share <- renderPlotly({
+    a <- mx_all()
+    d <- do.call(rbind, lapply(names(a), function(id) data.frame(spec = mixl_short[[id]], label = a[[id]]$summary$label,
+                                                                share = a[[id]]$summary$share_cv_above_cost)))
+    d$spec <- factor(d$spec, levels = unname(mixl_short))
+    MixlSharePlot(d)
+  })
+  output$tbl_mx_coefs <- renderReactable({
+    m <- mixl_app$models[[input$mx_est_model %||% names(mixl_app$models)[1]]]
+    d <- m$dist_table
+    df <- data.frame(parameter = d$coefficient, label = unname(param_labels[d$coefficient]), distribution = d$distribution,
+                     mean = d$mean, mean_se = d$mean_robse, sd = d$sd, sd_se = d$sd_robse, median = d$median, share_zero = d$share_zero)
+    dist_lab <- c(normal = "Normal", fixed = "Fixed", lognormal = "Log-normal", censored = "Censored normal")
+    se_line <- function(v, se) if (is.na(v)) "\u2013" else sub_line(fmt_num(v, 4), if (!is.na(se)) paste0("(", fmt_num(se, 4), ")"))
+    reactable(df, theme = rt_theme, sortable = FALSE, compact = TRUE, pagination = FALSE,
+              columns = list(
+                parameter = colDef(name = "Parameter", minWidth = 100, cell = function(value) tags$span(class = "var-code", value)),
+                label = colDef(name = "Attribute", minWidth = 200),
+                distribution = colDef(name = "Across men", minWidth = 100, cell = function(value) dist_lab[[value]]),
+                mean = colDef(name = "Mean", align = "right", minWidth = 95, cell = function(value, index) se_line(value, df$mean_se[index])),
+                mean_se = colDef(show = FALSE),
+                sd = colDef(name = "SD", align = "right", minWidth = 95, cell = function(value, index) se_line(value, df$sd_se[index])),
+                sd_se = colDef(show = FALSE),
+                median = colDef(name = "Median", align = "right", minWidth = 90, cell = function(value) if (is.na(value)) "\u2013" else fmt_num(value, 4)),
+                share_zero = colDef(name = "Share at zero", align = "right", minWidth = 90, cell = function(value) if (is.na(value)) "\u2013" else fmt_pct(value))))
+  })
 
   # ── One-way ────────────────────────────────────────────────────────────────
   observe({
@@ -491,7 +633,7 @@ server <- function(input, output, session) {
     df <- data.frame(parameter = names(m$beta), label = unname(param_labels[names(m$beta)]),
                      estimate = unname(m$beta), se = unname(m$se))
     df$lo <- df$estimate - 1.96 * df$se; df$hi <- df$estimate + 1.96 * df$se
-    reactable(df, theme = rt_theme, sortable = FALSE, compact = TRUE,
+    reactable(df, theme = rt_theme, sortable = FALSE, compact = TRUE, pagination = FALSE,
               rowClass = function(index) if (df$parameter[index] == s$money_slope) "row-money" else "",
               columns = list(
                 parameter = colDef(name = "Parameter", minWidth = 110, cell = function(value) tags$span(class = "var-code", value)),
@@ -731,12 +873,23 @@ method_content <- function() {
             p("We used the Krinsky-Robb method (2,000 draws of the utility parameters from a multivariate normal distribution ",
               "with the robust covariance matrix) for the intervals on the Results page. The probabilistic analysis also draws ",
               "each cost input from a beta-PERT distribution over its low, base and high values. In the one-way analysis, ",
-              "each input is varied over its range while all others are held at the base case."))),
+              "each input is varied over its range while all others are held at the base case."),
+            h2("8. Mixed logit"),
+            p("In the mixed logit, each man has his own coefficients, \\(\\beta_n\\), which vary across men: independent ",
+              "normal distributions for the services, and a price coefficient that is fixed, log-normal or censored at zero. ",
+              "Each man's CV is the log-sum formula with his own coefficients:"),
+            p("$$CV_n = \\frac{1}{\\lambda_n}\\Bigg[\\ln \\sum_{j \\in S_1} e^{V_{nj}^1} - \\ln \\sum_{j \\in S_0} e^{V_{nj}^0}\\Bigg]$$"),
+            p("We simulate 2,000 men from the estimated distribution and weight each by how likely he was to make the choices of ",
+              "each of the 406 men in the survey. Averaging these weights over the 406 men gives the weight \\(\\omega_r\\) of ",
+              "simulated man \\(r\\), and the mean CV is \\(\\sum_r \\omega_r CV(\\beta_r)\\). The median CV, the share of men ",
+              "whose CV exceeds the cost, uptake and costs use the same weights, and the calibration is done with them. When the ",
+              "price coefficient varies, men who are almost indifferent to price have very large CVs and dominate the mean, so the ",
+              "median is the more stable summary. Appendix A of the working paper gives the derivation."))),
       card(class = "mt-4",
            card_header(h2("Data and sources")),
            card_body(
              tags$ul(class = "sources",
-                     tags$li("Utility parameters: conditional logit models estimated from a discrete choice experiment among 406 ",
+                     tags$li("Utility parameters: conditional and mixed logit models estimated from a discrete choice experiment among 406 ",
                              "self-reported uncircumcised, HIV-negative men aged 18\u201345 years in Ntenjeru sub-county, Mukono district ",
                              "(4,872 choices; March\u2013April 2017)."),
                      tags$li("Larson B, et al. How much does it cost to improve access to voluntary medical male circumcision among high-risk, ",

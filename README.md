@@ -4,7 +4,7 @@ Benefits and costs of five medical male circumcision (MMC) demand creation polic
 
 This is the model behind the working paper:
 
-> Lubinga SJ, Babigumira JB, Graham SM, Mukose AD, Garrison LP Jr, Basu A. Preferences for medical male circumcision services and the benefits and costs of alternative service delivery policies: a discrete choice experiment among uncircumcised men in Uganda. Working paper, updated draft November 2026 (first version April 2018). [PDF](www/working_paper.pdf)
+> Lubinga SJ, Babigumira JB, Graham SM, Mukose AD, Garrison LP Jr, Basu A. Preferences for medical male circumcision services and the benefits and costs of alternative service delivery policies: a discrete choice experiment among uncircumcised men in Uganda. Working paper, November 2026. [PDF](www/working_paper.pdf)
 
 **Live app:** https://theejonslo.shinyapps.io/mmc-cba/
 
@@ -35,6 +35,7 @@ The three price coefficients are not different from each other (likelihood ratio
 | `R/00_packages.R` | Loads the packages the model uses |
 | `main.R` | Runs the base case, Krinsky-Robb, PSA, one-way analyses and scenarios, and writes tables and figures to `output/` |
 | `R/mixl.R`, `main_mixl.R` | The benefit-cost analysis with the mixed logits: each man's CV averaged over his posterior distribution, mean and median, with Krinsky-Robb intervals; tables and figures to `output/mixl_*` |
+| `data/mixl_app.rds` | The app's copy of the one-price mixed logits, written by `main_mixl.R`: estimates, the simulated men, and their weights in the base case and in each Krinsky-Robb draw. The weights depend only on the estimates and the survey choices, so the app recomputes everything else exactly for any inputs |
 | `paper/` | The working paper: LaTeX source, the script that writes its tables, figures and numbers, and the build script |
 | `app.R`, `app/`, `www/` | The Shiny app: page layout and server (`app.R`), helpers, charts and input editors (`app/`), styles, fonts, icon and the working paper PDF (`www/`) |
 
@@ -128,6 +129,7 @@ The Shiny app runs the same model. You can:
 - see each policy's uptake, CV, incremental cost and net benefit, and who would choose which service;
 - change any input: the choice model and its price coefficient, the calibration share, provider and treatment costs with their ranges and distributions;
 - design your own services from the experiment's attributes, and your own policies from those services;
+- compare the conditional logit with mixed logits, in which every man has his own preferences: mean and median CV, the share of men who value each policy above its cost, uptake and net benefit, with Krinsky-Robb intervals, for a fixed, log-normal or censored price coefficient;
 - run the one-way analysis for any policy as a tornado diagram, and the probabilistic analysis with a benefit-cost plane and the probability each policy has the highest net benefit;
 - download your inputs as a spreadsheet and upload them again later;
 - read the working paper.

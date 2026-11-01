@@ -103,10 +103,12 @@ wMedian <- function(x, w) {
 # 1) betas: coefficients of the simulated men, one row per man (mixlBetas)
 # 2) W: posterior weights [survey man, simulated man], or NULL for the population
 # 3) inputs, money_slope, costs, S: as in policyTrace
+# 4) omega: the weight of each simulated man, if already known (the app stores
+#    them, since they depend only on the estimates and the survey choices)
 # all results are per uncircumcised man, compared with the initial policy
-mixlTrace <- function(betas, W, inputs, money_slope, costs, S) {
+mixlTrace <- function(betas, W, inputs, money_slope, costs, S, omega = NULL) {
   R <- nrow(betas)
-  omega <- if (is.null(W)) rep(1 / R, R) else colMeans(W)   # weight of each simulated man
+  if (is.null(omega)) omega <- if (is.null(W)) rep(1 / R, R) else colMeans(W)   # weight of each simulated man
   policymat <- makePolicyMat(inputs$options, colnames(betas))
   policies <- setNames(inputs$policies$option_list, inputs$policies$policy)
   V <- betas %*% policymat                                   # [simulated man, option]
@@ -214,24 +216,57 @@ RunMixlCBA <- function(inputs, mixl,
 }
 
 ## Krinsky and Robb: the means and SDs drawn from their sampling distribution
-## (robust covariance), the same simulated men in every draw
+## (robust covariance), the same simulated men in every draw. Returns one
+## [draw, policy] matrix per measure, plus the parameter draws (pars) and the
+## weight of each simulated man in each draw (omega), which the app reuses.
+KR_MEASURES <- c("uptake", "uptake_change", "cv_mean", "cv_median", "total_cost",
+                 "nb_mean", "nb_median", "nb_total_mean", "nb_total_median", "share_cv_above_cost")
 RunMixlKR <- function(fit, nsims = 200, seed = fit$inputs$settings$seed) {
   set.seed(seed)
   pars <- MASS::mvrnorm(nsims, fit$mixl$par, fit$mixl$vcov)
-  sims <- lapply(seq_len(nsims), function(i)
-    RunMixlCBA(fit$inputs, fit$mixl, fit$money_slope, fit$method, fit$S, fit$costs,
-               par = pars[i, ], eta = fit$eta, cd = fit$cd)$summary)
-  measures <- c("uptake", "uptake_change", "cv_mean", "cv_median", "total_cost",
-                "nb_mean", "nb_median", "nb_total_mean", "nb_total_median", "share_cv_above_cost")
-  lapply(setNames(measures, measures), function(v) t(sapply(sims, `[[`, v)))
+  sims <- lapply(seq_len(nsims), function(i) {
+    r <- RunMixlCBA(fit$inputs, fit$mixl, fit$money_slope, fit$method, fit$S, fit$costs,
+                    par = pars[i, ], eta = fit$eta, cd = fit$cd)
+    list(summary = r$summary, omega = r$omega)
+  })
+  out <- lapply(setNames(KR_MEASURES, KR_MEASURES), function(v) t(sapply(sims, function(s) s$summary[[v]])))
+  c(out, list(pars = pars, omega = t(sapply(sims, `[[`, "omega"))))
 }
 
 # base case with 95% Krinsky-Robb intervals
 TabulateMixl <- function(fit, kr = NULL) {
   s <- fit$summary
-  if (!is.null(kr)) for (v in names(kr)) {
+  if (!is.null(kr)) for (v in intersect(names(kr), KR_MEASURES)) {
     q <- apply(kr[[v]], 2, quantile, c(0.025, 0.975), na.rm = TRUE)
     s[[paste0(v, "_lo")]] <- q[1, ]; s[[paste0(v, "_hi")]] <- q[2, ]
   }
   s
+}
+
+
+### the app
+# The app runs the mixed logits with stored weights for the simulated men
+# (base case and every Krinsky-Robb draw), written by main_mixl.R, so that
+# everything that depends on the app's inputs is recomputed exactly, in seconds.
+
+# what main_mixl.R stores for one model
+mixlAppModel <- function(fit, kr, label, dist_table) {
+  list(model = fit$model, label = label, mixl = fit$mixl[c("model", "draws", "seed", "par", "vcov", "vars", "dist")],
+       money_slope = fit$money_slope, eta = fit$eta, omega = fit$omega,
+       kr_pars = kr$pars, kr_omega = kr$omega, dist_table = dist_table)
+}
+
+# base case for the app's inputs
+RunMixlApp <- function(m, inputs, costs, S) {
+  res <- mixlTrace(mixlBetas(m$mixl, m$eta), NULL, inputs, m$money_slope, costs, S, omega = m$omega)
+  res$summary$label <- inputs$policies$label[match(res$summary$policy, inputs$policies$policy)]
+  res
+}
+
+# Krinsky-Robb for the app's inputs: one matrix [draw, policy] per measure
+RunMixlAppKR <- function(m, inputs, costs, S) {
+  sims <- lapply(seq_len(nrow(m$kr_pars)), function(i)
+    mixlTrace(mixlBetas(m$mixl, m$eta, m$kr_pars[i, ]), NULL, inputs, m$money_slope, costs, S,
+              omega = m$kr_omega[i, ])$summary)
+  lapply(setNames(KR_MEASURES, KR_MEASURES), function(v) t(sapply(sims, `[[`, v)))
 }

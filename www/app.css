@@ -129,6 +129,9 @@ a:hover { color: #104281; }
 /* Notes */
 .note { font-size: 0.9rem; color: var(--ink-2); background: var(--wash); border-radius: var(--radius-sm); padding: 0.6rem 0.85rem; margin: 0 0 1rem; max-width: none; }
 .note-stale { background: var(--edited-bg); color: var(--edited-ink); }
+.note-caution { background: var(--edited-bg); color: var(--edited-ink); }
+.kr-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.9rem; }
+.kr-text { font-size: 0.84rem; color: var(--ink-2); }
 .empty-state { padding: 2.5rem 1rem; text-align: center; color: var(--ink-2); }
 .empty-state p { margin: 0 auto 1rem; }
 
