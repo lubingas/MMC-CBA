@@ -88,11 +88,13 @@ oneway_panel <- nav_panel(
         selectInput("ow_outcome", "Result", choices = setNames(names(outcome_labels), outcome_labels), width = "320px"),
         checkboxGroupInput("ow_groups", "Inputs", inline = TRUE, selected = c("Costs", "Preferences", "Calibration"),
                            choices = c("Costs", "Preferences", "Calibration")),
-        div(class = "ctl-wide", sliderInput("ow_n", "Inputs shown", min = 5, max = 30, value = 15, step = 1, width = "220px"))),
+        div(class = "ctl-wide", sliderInput("ow_n", "Inputs shown", min = 5, max = 30, value = 15, step = 1, width = "220px")),
+        actionButton("ow_run", "Run the one-way analysis", class = "btn-primary")),
     p(class = "small-print", style = "margin: 0.8rem 0 0;",
       "Each input is set to its low and then its high value while all other inputs are held at the base case: costs to the ",
       "ranges on the Inputs page, utility parameters to their 95% confidence limits, and the share of men who remain ",
       "uncircumcised in the initial state to 60% and 80%. The opt-out constant has no effect because it is absorbed by the calibration."))),
+  uiOutput("ow_stale"),
   card(class = "mt-3", card_header(uiOutput("ow_title")), card_body(uiOutput("ow_plot_ui")))
 )
 
@@ -346,26 +348,42 @@ server <- function(input, output, session) {
     ch <- setNames(p$policy[-1], p$label[-1])
     updateSelectInput(session, "ow_policy", choices = ch, selected = if (!is.null(sel) && sel %in% ch) sel else ch[min(4, length(ch))])
   })
-  ow <- reactive({
-    req(input$ow_policy %in% pol()$policy, input$ow_outcome)
-    o <- owsa(bc(), input$ow_policy, input$ow_outcome)
-    o[o$group %in% input$ow_groups, ]
+  # runs only when the button is pressed; the inputs shown and their number filter the last run
+  ow_state <- reactiveVal(NULL)
+  run_owsa <- function() {
+    m <- tryCatch(bc(), error = function(e) e)
+    if (inherits(m, "error")) return(showNotification("Fix the inputs first: the model can't run with them.", type = "error"))
+    pid <- input$ow_policy; oc <- input$ow_outcome
+    if (is.null(pid) || !pid %in% pol()$policy) return(showNotification("Choose a policy.", type = "warning"))
+    res <- withProgress(message = "Running the one-way analysis", value = 0.5,
+                        tryCatch(owsa(m, pid, oc), error = function(e) e))
+    if (inherits(res, "error")) return(showNotification(paste("The one-way analysis stopped:", conditionMessage(res)), type = "error", duration = 10))
+    ow_state(list(res = res, inputs = rv$inputs, policy = pid, outcome = oc,
+                  label = pol()$label[match(pid, pol()$policy)], base = m[[oc]][1, pid]))
+  }
+  observeEvent(input$ow_run, run_owsa())
+  ow <- reactive({ s <- ow_state(); req(s); s$res[s$res$group %in% input$ow_groups, ] })
+  output$ow_stale <- renderUI({
+    s <- ow_state(); if (is.null(s)) return(NULL)
+    if (!identical(s$inputs, rv$inputs) || !identical(s$policy, input$ow_policy) || !identical(s$outcome, input$ow_outcome))
+      div(class = "note note-stale", "The inputs or choices have changed since this run. Run the one-way analysis again to update it.")
   })
   output$ow_title <- renderUI({
-    req(input$ow_policy %in% pol()$policy)
-    lab <- pol()$label[match(input$ow_policy, pol()$policy)]
-    tagList(h2(sprintf("%s: %s", lab, tolower(outcome_labels[[input$ow_outcome]]))),
+    s <- ow_state(); if (is.null(s)) return(h2("One-way sensitivity analysis"))
+    tagList(h2(sprintf("%s: %s", s$label, tolower(outcome_labels[[s$outcome]]))),
             p(class = "card-sub", sprintf("Base case %s per man. Bars run from the base case to the result with each input at its low (blue) and high (orange) value.",
-                                          fmt_usd(bc()[[input$ow_outcome]][1, input$ow_policy]))))
+                                          fmt_usd(s$base))))
   })
   output$ow_plot_ui <- renderUI({
+    s <- ow_state()
+    if (is.null(s)) return(div(class = "empty-state", p("Choose a policy and a result, then run the one-way analysis to see which inputs move the result most.")))
     n <- min(input$ow_n, nrow(ow()))
     if (n == 0) return(div(class = "empty-state", p("Choose at least one group of inputs.")))
     plotlyOutput("ow_plot", height = paste0(90 + 34 * n, "px"))
   })
   output$ow_plot <- renderPlotly({
-    o <- head(ow(), input$ow_n)
-    TornadoPlot(o, bc()[[input$ow_outcome]][1, input$ow_policy], outcome_labels[[input$ow_outcome]])
+    s <- ow_state(); req(s)
+    TornadoPlot(head(ow(), input$ow_n), s$base, outcome_labels[[s$outcome]])
   })
 
   # ── Probabilistic analysis ─────────────────────────────────────────────────
