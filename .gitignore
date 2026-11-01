@@ -6,8 +6,8 @@
 ~$*
 rsconnect/
 
-# working paper: LaTeX build files, and the PDF built with licensed fonts (keep it on the Mac).
-# The draft PDF the app links to is www/working_paper.pdf.
+# working paper: LaTeX build files and the local build. The published PDF, which the app
+# links to, is www/working_paper.pdf (the Mac build, copied there by paper/build.sh mac).
 paper/*.aux
 paper/*.log
 paper/*.bbl

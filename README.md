@@ -4,7 +4,7 @@ Benefits and costs of five medical male circumcision (MMC) demand creation polic
 
 This is the model behind the working paper:
 
-> Lubinga SJ, Babigumira JB, Graham SM, Mukose AD, Garrison LP Jr, Basu A. Preferences for medical male circumcision services and the benefits and costs of alternative service delivery policies: a discrete choice experiment among uncircumcised men in Uganda. Working paper, updated draft October 2026 (first version April 2018). [PDF](www/working_paper.pdf)
+> Lubinga SJ, Babigumira JB, Graham SM, Mukose AD, Garrison LP Jr, Basu A. Preferences for medical male circumcision services and the benefits and costs of alternative service delivery policies: a discrete choice experiment among uncircumcised men in Uganda. Working paper, updated draft November 2026 (first version April 2018). [PDF](www/working_paper.pdf)
 
 **Live app:** https://theejonslo.shinyapps.io/mmc-cba/
 
@@ -115,11 +115,11 @@ The result of `RunCBA()` carries its inputs, so `RunKR()`, `genPSA()`, `RunPSA()
 
 ```bash
 Rscript paper/make_paper.R      # after any change to the model or inputs
-bash paper/build.sh draft       # free stand-in fonts (TeX Gyre Pagella, DejaVu); copied to www/working_paper.pdf for the app
-bash paper/build.sh mac         # Sabon, Source Sans Pro, Museo Slab and STIX Two from /Library/Fonts
+bash paper/build.sh mac         # Sabon, Source Sans Pro, Museo Slab and STIX Two from /Library/Fonts; copied to www/working_paper.pdf
+bash paper/build.sh draft       # free stand-in fonts (TeX Gyre Pagella, DejaVu), for building without those fonts
 ```
 
-Sabon is a licensed font, so the Mac build is for the Mac only: it stays at `paper/workingpaper.pdf`, which git ignores. Don't commit it or share it outside the Mac.
+The published paper, `www/working_paper.pdf`, is the Mac build; the app and this README link to it. The fonts themselves are licensed and are not in this repository, so the Mac build only works where they are installed. The draft build stays at `paper/workingpaper.pdf`, which git ignores.
 
 ## The app
 
