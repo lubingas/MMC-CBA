@@ -174,78 +174,21 @@ CV = \frac{1}{\lambda}\Bigg[\ln \sum_{j \in S_1} e^{V_j^1} - \ln \sum_{j \in S_0
 A positive CV is a welfare gain: the amount an individual would be willing to pay for the new set of services. In the base case, $\lambda = -\beta_{price} = \mmclambda$ per US\$. We computed the CV of each policy relative to the initial state. Because a single price coefficient applies to all payments, an incentive payment of $m$ dollars contributes $\lambda m$ to utility and is valued at exactly $m$ dollars; it therefore cancels against its cost to the payer, as a transfer should in a societal analysis. The utility of receiving a cash or voucher incentive, beyond its money value ($\beta_{cash}$ and $\beta_{voucher}$), does not cancel.
 
 \subsubsection{Compensating variation with a mixed logit}\label{sec:cvmixl}
-In the mixed logit, men differ in their coefficients, so each man has his own CV. Write man $n$'s utility from alternative $j$ as
-\begin{equation}\label{eq:un}
-U_{nj} = \lambda_n y_n + V_{nj} + \epsilon_{nj}, \qquad V_{nj} = x_j\boldsymbol{\beta_n},
+In the mixed logit, men differ in their coefficients, so each man has his own CV. For man $n$, with coefficients $\boldsymbol{\beta_n}$ and marginal utility of income $\lambda_n = -\beta_{price,n}$, the argument behind equation~\ref{eq:cv} gives
+\begin{equation}\label{eq:cvnmain}
+CV_n = CV(\boldsymbol{\beta_n}) = \frac{1}{\lambda_n}\Bigg[\ln \sum_{j \in S_1} e^{V_{nj}^1} - \ln \sum_{j \in S_0} e^{V_{nj}^0}\Bigg].
 \end{equation}
-where $\lambda_n = -\beta_{price,n}$ is his marginal utility of income. Conditional on $\boldsymbol{\beta_n}$, the errors are Gumbel distributed as before, so his expected maximum utility from a choice set $S$ is
-\begin{equation}\label{eq:emax}
-E\Big[\max_{j \in S} U_{nj} \;\Big|\; \boldsymbol{\beta_n}\Big] = \lambda_n y_n + \ln \sum_{j \in S} e^{V_{nj}} + C,
+We do not observe $\boldsymbol{\beta_n}$, but each man's choices in the survey tell us something about it. We drew \mmcMXsimMen{} coefficient vectors, $\boldsymbol{\beta}_r$, from the estimated distribution and weighted each by how likely it was to produce man $n$'s choices,
+\begin{equation}\label{eq:wmain}
+w_{nr} = \frac{P(y_n \mid \boldsymbol{\beta}_r)}{\sum_{s=1}^{R} P(y_n \mid \boldsymbol{\beta}_s)},
 \end{equation}
-where $C$ is Euler's constant. His CV for a move from $S_0$ to $S_1$ is the payment that leaves this expectation unchanged:
-\begin{equation}\label{eq:cvn0}
-\lambda_n (y_n - CV_n) + \ln \sum_{j \in S_1} e^{V_{nj}^1} + C = \lambda_n y_n + \ln \sum_{j \in S_0} e^{V_{nj}^0} + C.
+with $P(y_n \mid \boldsymbol{\beta})$ from equation~\ref{eq:pseq}. Man $n$'s expected CV, given his choices, is $\sum_r w_{nr}\, CV(\boldsymbol{\beta}_r)$, and its mean over the 406 men is
+\begin{equation}\label{eq:cvbarmain}
+\overline{CV} = \sum_{r=1}^{R} \omega_r\, CV(\boldsymbol{\beta}_r), \qquad \omega_r = \frac{1}{N}\sum_{n=1}^{N} w_{nr}.
 \end{equation}
-Income and the constant cancel, and solving for $CV_n$ gives
-\begin{equation}\label{eq:cvn}
-CV_n = CV(\boldsymbol{\beta_n}) = \frac{1}{\lambda_n}\Bigg[\ln \sum_{j \in S_1} e^{V_{nj}^1} - \ln \sum_{j \in S_0} e^{V_{nj}^0}\Bigg] = \frac{\Delta L(\boldsymbol{\beta_n})}{\lambda_n},
-\end{equation}
-where $\Delta L(\boldsymbol{\beta_n})$ is the change in his log-sum, in units of utility. This is equation~\ref{eq:cv} with his own coefficients in place of the common ones.
+The same weights give the median CV, the share of men whose CV exceeds the incremental cost per man, and the choice probabilities used for uptake and costs, and the opt-out constant is calibrated with them as in equation~\ref{eq:calibration}. As a check, we also computed the unconditional mean, $\frac{1}{R}\sum_r CV(\boldsymbol{\beta}_r)$, which estimates the same quantity if the model is correctly specified. For comparison with the earlier version of this paper, we also report the plug-in CV, evaluated at each man's posterior mean coefficients.
 
-We do not observe $\boldsymbol{\beta_n}$. In the population it follows $f(\boldsymbol{\beta} \mid \Omega)$, so the mean CV in the population is
-\begin{equation}\label{eq:ecv}
-E[CV] = \int CV(\boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta}.
-\end{equation}
-Because $CV(\boldsymbol{\beta})$ is not linear in $\boldsymbol{\beta}$, $E[CV]$ is not the CV at the mean coefficients. In particular, whenever $\lambda$ varies, $E[1/\lambda] > 1/E[\lambda]$ by Jensen's inequality. The integral has no closed form, and with $R$ draws $\boldsymbol{\beta}_r$ from $f(\boldsymbol{\beta} \mid \hat\Omega)$ it is approximated by
-\begin{equation}\label{eq:ecvsim}
-E[CV] \approx \frac{1}{R}\sum_{r=1}^{R} CV(\boldsymbol{\beta}_r).
-\end{equation}
-
-Each man's choices in the survey tell us something about his coefficients. By Bayes' rule, the distribution of $\boldsymbol{\beta}$ among men who made the sequence of choices $y_n$ is\cite{RN89}
-\begin{equation}\label{eq:post}
-h(\boldsymbol{\beta} \mid y_n, \Omega) = \frac{P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)}{P(y_n \mid \Omega)}, \qquad P(y_n \mid \Omega) = \int P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta},
-\end{equation}
-with $P(y_n \mid \boldsymbol{\beta})$ from equation~\ref{eq:pseq}. His expected CV, given his choices, is therefore
-\begin{equation}\label{eq:cvpost}
-E[CV_n \mid y_n] = \int CV(\boldsymbol{\beta})\, h(\boldsymbol{\beta} \mid y_n, \Omega)\, d\boldsymbol{\beta} = \frac{\int CV(\boldsymbol{\beta})\, P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta}}{\int P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta}}.
-\end{equation}
-Using the same $R$ draws in the numerator and the denominator,
-\begin{equation}\label{eq:cvpostsim}
-E[CV_n \mid y_n] \approx \sum_{r=1}^{R} w_{nr}\, CV(\boldsymbol{\beta}_r), \qquad w_{nr} = \frac{P(y_n \mid \boldsymbol{\beta}_r)}{\sum_{s=1}^{R} P(y_n \mid \boldsymbol{\beta}_s)}.
-\end{equation}
-Each simulated man $r$ is weighted by how likely he was to make man $n$'s choices. We used \mmcMXsimMen{} draws.
-
-Averaging over the $N = 406$ men in the survey gives the population figure we report:
-\begin{equation}\label{eq:cvbar}
-\overline{CV} = \frac{1}{N}\sum_{n=1}^{N} E[CV_n \mid y_n] \approx \sum_{r=1}^{R} \omega_r\, CV(\boldsymbol{\beta}_r), \qquad \omega_r = \frac{1}{N}\sum_{n=1}^{N} w_{nr}.
-\end{equation}
-The second form shows that this is equation~\ref{eq:ecvsim} with the equal weights $1/R$ replaced by $\omega_r$. The population is represented by the 406 conditional distributions pooled together. If the model is correctly specified and the sample represents the population, the average of the conditional distributions over the sample is the population distribution, $\frac{1}{N}\sum_n h(\boldsymbol{\beta} \mid y_n, \Omega) \rightarrow f(\boldsymbol{\beta} \mid \Omega)$,\cite{RN89} so $\overline{CV}$ and $E[CV]$ estimate the same quantity. We computed both; a large difference between them would point to a misspecified mixing distribution.
-
-The same weights give the median CV, the value $m$ that solves
-\begin{equation}\label{eq:median}
-\sum_{r=1}^{R} \omega_r\, \mathbf{1}\big[CV(\boldsymbol{\beta}_r) \le m\big] = \frac{1}{2},
-\end{equation}
-and the share of men whose CV exceeds the incremental cost per man, $\Delta C$ (equation~\ref{eq:cost}),
-\begin{equation}\label{eq:gain}
-G = \sum_{r=1}^{R} \omega_r\, \mathbf{1}\big[CV(\boldsymbol{\beta}_r) > \Delta C\big].
-\end{equation}
-Choice probabilities are averaged in the same way, $\bar P_j(S) = \sum_r \omega_r P_j(S \mid \boldsymbol{\beta}_r)$, and take the place of the conditional logit probabilities in equations~\ref{eq:cost} and~\ref{eq:nb}. The opt-out constant is calibrated as in equation~\ref{eq:calibration}, with one shift $\hat a$ for all men, chosen so that $\sum_r \omega_r P_0(S_0 \mid \boldsymbol{\beta}_r, \hat a) = S$.
-
-In the earlier version of this paper, we computed each man's CV at his posterior mean coefficients:
-\begin{equation}\label{eq:plugin}
-CV(\bar{\boldsymbol{\beta}}_n), \qquad \bar{\boldsymbol{\beta}}_n = E[\boldsymbol{\beta} \mid y_n] \approx \sum_{r=1}^{R} w_{nr}\, \boldsymbol{\beta}_r.
-\end{equation}
-Because $CV(\boldsymbol{\beta})$ is not linear in $\boldsymbol{\beta}$, $CV(\bar{\boldsymbol{\beta}}_n)$ is not $E[CV_n \mid y_n]$. When $\lambda$ is fixed, the difference comes only from the log-sum and is usually small. When $\lambda$ varies, $1/\bar\lambda_n$ understates the posterior mean of $1/\lambda$, and the difference can be large. We report this plug-in estimate for comparison.
-
-Finally, the distribution of $\lambda$ decides whether the mean CV is well behaved. From equation~\ref{eq:cvn}, $E[CV] = E[\Delta L(\boldsymbol{\beta})/\lambda]$. With a fixed $\lambda$ this is $E[\Delta L]/\lambda$. Now take a policy that does not change what men pay, such as outreach services or device circumcision. Its $\Delta L$ does not involve the price coefficient, and because the coefficients are independent, $\Delta L$ and $\lambda$ are independent, so that
-\begin{equation}\label{eq:ecvindep}
-E[CV] = E[\Delta L]\; E\Big[\frac{1}{\lambda}\Big].
-\end{equation}
-With a log-normal price coefficient, $\lambda = \exp(\mu + \sigma\zeta)$, so $1/\lambda = \exp(-\mu - \sigma\zeta)$, where $-\mu - \sigma\zeta \sim \mathcal{N}(-\mu, \sigma^2)$. For any $X \sim \mathcal{N}(a, s^2)$, $E[e^X] = e^{a + s^2/2}$, so
-\begin{equation}\label{eq:invlambda}
-E\Big[\frac{1}{\lambda}\Big] = \exp\Big(-\mu + \frac{\sigma^2}{2}\Big) = \frac{1}{\lambda_{med}}\exp\Big(\frac{\sigma^2}{2}\Big),
-\end{equation}
-where $\lambda_{med} = \exp(\mu)$ is the median of $\lambda$. Substituting equation~\ref{eq:invlambda} into equation~\ref{eq:ecvindep}, the mean CV is $E[\Delta L]/\lambda_{med}$, the CV of a man with the median price coefficient, multiplied by $\exp(\sigma^2/2)$. The factor grows quickly with $\sigma$: it is 1.6 at $\sigma = 1$ and 7.4 at $\sigma = 2$. With a censored normal price coefficient, $\lambda = \max(0, -\mu - \sigma\zeta)$, and a share $\Phi(\mu/\sigma)$ of men have $\lambda = 0$. Their CV is unbounded, so $E[CV]$ does not exist.\cite{DalyHessTrain2012} For this specification we report the mean and median CV among men with $\lambda > 0$, and the share with $\lambda = 0$.
+The distribution of the price coefficient matters because the CV divides by it. With a log-normal price coefficient, the mean CV of a policy that does not change what men pay is the CV of a man with the median price coefficient multiplied by $\exp(\sigma_{price}^2/2)$, which grows quickly with $\sigma_{price}$. With a censored price coefficient, some men are not sensitive to price at all. Their CV is unbounded and the mean CV does not exist, so we report the mean and median among the other men, and the share left out. Appendix~\ref{app:cv} gives the derivations.
 
 \subsubsection{Costs}
 The incremental cost per uncircumcised man of a policy, $S_1$, relative to the initial state is
@@ -524,5 +467,89 @@ This research was funded in part by a 2015 developmental grant from the Universi
 \includegraphics[width=\textwidth]{figures/fig_mixl_cv.pdf}
 \caption{Mean and median compensating variation with the mixed logit under three distributions of the price coefficient, with the conditional logit CV and the incremental cost per uncircumcised man (one price coefficient; log scale).}\label{fig:mixlcv}
 \end{figure}
+
+
+% ---- Appendix
+\clearpage
+\appendix
+\section{Compensating variation with a mixed logit}\label{app:cv}
+\subsection{Each man's compensating variation}
+This appendix derives the results summarised in Section~\ref{sec:cvmixl}. In the mixed logit, men differ in their coefficients, so each man has his own CV. Write man $n$'s utility from alternative $j$ as
+\begin{equation}\label{eq:un}
+U_{nj} = \lambda_n y_n + V_{nj} + \epsilon_{nj}, \qquad V_{nj} = x_j\boldsymbol{\beta_n},
+\end{equation}
+where $\lambda_n = -\beta_{price,n}$ is his marginal utility of income. Conditional on $\boldsymbol{\beta_n}$, the errors are Gumbel distributed as before, so his expected maximum utility from a choice set $S$ is
+\begin{equation}\label{eq:emax}
+E\Big[\max_{j \in S} U_{nj} \;\Big|\; \boldsymbol{\beta_n}\Big] = \lambda_n y_n + \ln \sum_{j \in S} e^{V_{nj}} + C,
+\end{equation}
+where $C$ is Euler's constant. His CV for a move from $S_0$ to $S_1$ is the payment that leaves this expectation unchanged:
+\begin{equation}\label{eq:cvn0}
+\lambda_n (y_n - CV_n) + \ln \sum_{j \in S_1} e^{V_{nj}^1} + C = \lambda_n y_n + \ln \sum_{j \in S_0} e^{V_{nj}^0} + C.
+\end{equation}
+Income and the constant cancel, and solving for $CV_n$ gives
+\begin{equation}\label{eq:cvn}
+CV_n = CV(\boldsymbol{\beta_n}) = \frac{1}{\lambda_n}\Bigg[\ln \sum_{j \in S_1} e^{V_{nj}^1} - \ln \sum_{j \in S_0} e^{V_{nj}^0}\Bigg] = \frac{\Delta L(\boldsymbol{\beta_n})}{\lambda_n},
+\end{equation}
+where $\Delta L(\boldsymbol{\beta_n})$ is the change in his log-sum, in units of utility. This is equation~\ref{eq:cv} with his own coefficients in place of the common ones.
+
+\subsection{The mean in the population}
+We do not observe $\boldsymbol{\beta_n}$. In the population it follows $f(\boldsymbol{\beta} \mid \Omega)$, so the mean CV in the population is
+\begin{equation}\label{eq:ecv}
+E[CV] = \int CV(\boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta}.
+\end{equation}
+Because $CV(\boldsymbol{\beta})$ is not linear in $\boldsymbol{\beta}$, $E[CV]$ is not the CV at the mean coefficients. In particular, whenever $\lambda$ varies, $E[1/\lambda] > 1/E[\lambda]$ by Jensen's inequality. The integral has no closed form, and with $R$ draws $\boldsymbol{\beta}_r$ from $f(\boldsymbol{\beta} \mid \hat\Omega)$ it is approximated by
+\begin{equation}\label{eq:ecvsim}
+E[CV] \approx \frac{1}{R}\sum_{r=1}^{R} CV(\boldsymbol{\beta}_r).
+\end{equation}
+
+\subsection{Conditioning on each man's choices}
+Each man's choices in the survey tell us something about his coefficients. By Bayes' rule, the distribution of $\boldsymbol{\beta}$ among men who made the sequence of choices $y_n$ is\cite{RN89}
+\begin{equation}\label{eq:post}
+h(\boldsymbol{\beta} \mid y_n, \Omega) = \frac{P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)}{P(y_n \mid \Omega)}, \qquad P(y_n \mid \Omega) = \int P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta},
+\end{equation}
+with $P(y_n \mid \boldsymbol{\beta})$ from equation~\ref{eq:pseq}. His expected CV, given his choices, is therefore
+\begin{equation}\label{eq:cvpost}
+E[CV_n \mid y_n] = \int CV(\boldsymbol{\beta})\, h(\boldsymbol{\beta} \mid y_n, \Omega)\, d\boldsymbol{\beta} = \frac{\int CV(\boldsymbol{\beta})\, P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta}}{\int P(y_n \mid \boldsymbol{\beta})\, f(\boldsymbol{\beta} \mid \Omega)\, d\boldsymbol{\beta}}.
+\end{equation}
+Using the same $R$ draws in the numerator and the denominator,
+\begin{equation}\label{eq:cvpostsim}
+E[CV_n \mid y_n] \approx \sum_{r=1}^{R} w_{nr}\, CV(\boldsymbol{\beta}_r), \qquad w_{nr} = \frac{P(y_n \mid \boldsymbol{\beta}_r)}{\sum_{s=1}^{R} P(y_n \mid \boldsymbol{\beta}_s)}.
+\end{equation}
+Each simulated man $r$ is weighted by how likely he was to make man $n$'s choices. We used \mmcMXsimMen{} draws.
+
+Averaging over the $N = 406$ men in the survey gives the population figure we report:
+\begin{equation}\label{eq:cvbar}
+\overline{CV} = \frac{1}{N}\sum_{n=1}^{N} E[CV_n \mid y_n] \approx \sum_{r=1}^{R} \omega_r\, CV(\boldsymbol{\beta}_r), \qquad \omega_r = \frac{1}{N}\sum_{n=1}^{N} w_{nr}.
+\end{equation}
+The second form shows that this is equation~\ref{eq:ecvsim} with the equal weights $1/R$ replaced by $\omega_r$. The population is represented by the 406 conditional distributions pooled together. If the model is correctly specified and the sample represents the population, the average of the conditional distributions over the sample is the population distribution, $\frac{1}{N}\sum_n h(\boldsymbol{\beta} \mid y_n, \Omega) \rightarrow f(\boldsymbol{\beta} \mid \Omega)$,\cite{RN89} so $\overline{CV}$ and $E[CV]$ estimate the same quantity. We computed both; a large difference between them would point to a misspecified mixing distribution.
+
+\subsection{Median, share gaining, uptake and calibration}
+The same weights give the median CV, the value $m$ that solves
+\begin{equation}\label{eq:median}
+\sum_{r=1}^{R} \omega_r\, \mathbf{1}\big[CV(\boldsymbol{\beta}_r) \le m\big] = \frac{1}{2},
+\end{equation}
+and the share of men whose CV exceeds the incremental cost per man, $\Delta C$ (equation~\ref{eq:cost}),
+\begin{equation}\label{eq:gain}
+G = \sum_{r=1}^{R} \omega_r\, \mathbf{1}\big[CV(\boldsymbol{\beta}_r) > \Delta C\big].
+\end{equation}
+Choice probabilities are averaged in the same way, $\bar P_j(S) = \sum_r \omega_r P_j(S \mid \boldsymbol{\beta}_r)$, and take the place of the conditional logit probabilities in equations~\ref{eq:cost} and~\ref{eq:nb}. The opt-out constant is calibrated as in equation~\ref{eq:calibration}, with one shift $\hat a$ for all men, chosen so that $\sum_r \omega_r P_0(S_0 \mid \boldsymbol{\beta}_r, \hat a) = S$.
+
+\subsection{The plug-in estimate}
+In the earlier version of this paper, we computed each man's CV at his posterior mean coefficients:
+\begin{equation}\label{eq:plugin}
+CV(\bar{\boldsymbol{\beta}}_n), \qquad \bar{\boldsymbol{\beta}}_n = E[\boldsymbol{\beta} \mid y_n] \approx \sum_{r=1}^{R} w_{nr}\, \boldsymbol{\beta}_r.
+\end{equation}
+Because $CV(\boldsymbol{\beta})$ is not linear in $\boldsymbol{\beta}$, $CV(\bar{\boldsymbol{\beta}}_n)$ is not $E[CV_n \mid y_n]$. When $\lambda$ is fixed, the difference comes only from the log-sum and is usually small. When $\lambda$ varies, $1/\bar\lambda_n$ understates the posterior mean of $1/\lambda$, and the difference can be large. We report this plug-in estimate for comparison.
+
+\subsection{The distribution of the marginal utility of income}
+The distribution of $\lambda$ decides whether the mean CV is well behaved. From equation~\ref{eq:cvn}, $E[CV] = E[\Delta L(\boldsymbol{\beta})/\lambda]$. With a fixed $\lambda$ this is $E[\Delta L]/\lambda$. Now take a policy that does not change what men pay, such as outreach services or device circumcision. Its $\Delta L$ does not involve the price coefficient, and because the coefficients are independent, $\Delta L$ and $\lambda$ are independent, so that
+\begin{equation}\label{eq:ecvindep}
+E[CV] = E[\Delta L]\; E\Big[\frac{1}{\lambda}\Big].
+\end{equation}
+With a log-normal price coefficient, $\lambda = \exp(\mu + \sigma\zeta)$, so $1/\lambda = \exp(-\mu - \sigma\zeta)$, where $-\mu - \sigma\zeta \sim \mathcal{N}(-\mu, \sigma^2)$. For any $X \sim \mathcal{N}(a, s^2)$, $E[e^X] = e^{a + s^2/2}$, so
+\begin{equation}\label{eq:invlambda}
+E\Big[\frac{1}{\lambda}\Big] = \exp\Big(-\mu + \frac{\sigma^2}{2}\Big) = \frac{1}{\lambda_{med}}\exp\Big(\frac{\sigma^2}{2}\Big),
+\end{equation}
+where $\lambda_{med} = \exp(\mu)$ is the median of $\lambda$. Substituting equation~\ref{eq:invlambda} into equation~\ref{eq:ecvindep}, the mean CV is $E[\Delta L]/\lambda_{med}$, the CV of a man with the median price coefficient, multiplied by $\exp(\sigma^2/2)$. The factor grows quickly with $\sigma$: it is 1.6 at $\sigma = 1$ and 7.4 at $\sigma = 2$. With a censored normal price coefficient, $\lambda = \max(0, -\mu - \sigma\zeta)$, and a share $\Phi(\mu/\sigma)$ of men have $\lambda = 0$. Their CV is unbounded, so $E[CV]$ does not exist.\cite{DalyHessTrain2012} For this specification we report the mean and median CV among men with $\lambda > 0$, and the share with $\lambda = 0$.
 
 \end{document}
