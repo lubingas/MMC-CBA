@@ -103,9 +103,6 @@ mac("OWcvTopOne", tolower(top_cv$label[1])); mac("OWcvTopOneLo", usd(top_cv$low[
 mac("OWcvTopTwo", tolower(top_cv$label[2])); mac("OWcvTopThree", tolower(top_cv$label[3]))
 mac("OWtotTop", paste(tolower(top_tot$label), collapse = "; "))
 
-# 2018 reproduction
-mac("ReproOutreach", usd(repro$this_model[1])); mac("ReproDevice", usd(repro$this_model[2])); mac("ReproCash", usd(repro$this_model[3]))
-
 writeLines(sprintf("\\newcommand{\\mmc%s}{%s}", names(macros), unlist(macros)), "paper/numbers.tex")
 
 
@@ -225,21 +222,6 @@ write.tab("tab_psa.tex",
           c("Policy", "\\makecell{CV $-$ cost, mean\\\\(95\\% CI)}", "P($>$0)", "\\makecell{Net benefit, mean\\\\(95\\% CI)}",
             "\\makecell{Highest,\\\\CV $-$ cost}", "\\makecell{Highest,\\\\net benefit}"),
           psa_rows, ">{\\raggedright\\arraybackslash}p{3.2cm}ccccc")
-
-# reproduction of the 2018 CL estimates of the CV
-std3 <- RunUncalibrated(inputs, "cl_three_price_slopes", "pricenone")
-unc1 <- RunUncalibrated(inputs, base_case$model, base_case$money_slope)
-rp_ids <- c("outreach", "device", "cash")
-rep_rows <- lapply(seq_along(rp_ids), function(i) {
-  id <- rp_ids[i]
-  c(esc(pol$label[pol$policy == id]), usd(repro$paper_2018[i]), usd(repro$this_model[i]),
-    usd(std3$cv[1, id]), usd(unc1$cv[1, id]), usd(base_case$cv[1, id]))
-})
-write.tab("tab_repro.tex",
-          c("Policy", "\\makecell{2018 working\\\\paper}", "\\makecell{(a) Options added\\\\one at a time}", "\\makecell{(b) Each policy vs\\\\initial state}",
-            "\\makecell{(c) One price\\\\coefficient}", "\\makecell{(d) Calibrated\\\\(base case)}"),
-          rep_rows, ">{\\raggedright\\arraybackslash}p{3.0cm}rrrrr")
-
 
 ### figures (Source Sans Pro, as in the captions)
 fam <- "Source Sans Pro"
@@ -426,7 +408,7 @@ price_rows <- lapply(seq_along(ids), function(i) {
   c(esc(pol$label[pol$policy == id]), dol(cl$cv_mean[i]), dol(rF$cv_mean), dol(rF$cv_median),
     dol(rL$cv_mean, 0), dol(rL$cv_median), dol(rL$cv_plugin_mean), dol(rC$cv_mean), dol(rC$cv_median))
 })
-write.tab("tab_mixl_price.tex", c("Policy", "CV", "Mean", "Median", "Mean", "Median", "\\makecell{Plug-in\\\\(2018)}", "Mean", "Median"),
+write.tab("tab_mixl_price.tex", c("Policy", "CV", "Mean", "Median", "Mean", "Median", "Plug-in", "Mean", "Median"),
           price_rows, ">{\\raggedright\\arraybackslash}p{2.7cm}cccccccc",
           pre = c("& \\makecell{Conditional\\\\logit} & \\multicolumn{2}{c}{Price fixed} & \\multicolumn{3}{c}{Price lognormal} & \\multicolumn{2}{c}{Price censored at zero} \\\\",
                   "\\cmidrule(lr){3-4}\\cmidrule(lr){5-7}\\cmidrule(lr){8-9}"))
