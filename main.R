@@ -66,6 +66,23 @@ cat("\nProbabilistic analysis (utility parameters and costs), per man\n")
 show(psa_summary[, c("label", "nb_cv_mean", "nb_cv_lo", "nb_cv_hi", "nb_cv_p_positive", "nb_total_mean", "nb_total_lo", "nb_total_hi", "p_best_nb_cv", "p_best_nb_total")])
 
 
+## BUDGET PERSPECTIVE
+# what the health budget pays now and saves later, per uncircumcised man, and how
+# often the ART costs averted exceed the cost when costs and preferences vary
+pol <- inputs$policies$policy[-1]
+budget <- data.frame(policy = pol, label = inputs$policies$label[-1],
+                     budgetView(base_case$total_cost[1, pol], base_case$transfers[1, pol],
+                                base_case$uptake_change[1, pol], base_case$costs))
+ok <- psa_res$valid
+ret <- psa_res$tx_savings[ok, pol, drop = FALSE] / psa_res$total_cost[ok, pol, drop = FALSE]
+budget$p_saving  <- colMeans(ret > 1)
+budget$return_lo <- apply(ret, 2, quantile, 0.025)
+budget$return_hi <- apply(ret, 2, quantile, 0.975)
+write.csv(budget, "output/budget.csv", row.names = FALSE)
+cat("\nBudget perspective, per uncircumcised man\n")
+show(budget[, c("label", "total_cost", "cost_per_extra_mmc", "return_per_dollar", "return_lo", "return_hi",
+                "payback_years", "irr", "coverage_needed", "p_saving")])
+
 ## ONE WAY SENSITIVITY ANALYSES
 # cost inputs only, every policy
 dsa_costs <- owsaCosts(base_case, "nb_total")

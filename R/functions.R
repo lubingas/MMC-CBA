@@ -252,6 +252,60 @@ RunKR <- function(model, nsims = model$inputs$settings$n_draws, seed = model$inp
 }
 
 
+### budget perspective
+# What the health budget pays now and saves later. A policy costs dC per
+# uncircumcised man now (provider costs and incentive payments) and raises
+# uptake by dU, so it averts dU / k infections, each of which would have cost
+# the budget c_ART a year for L years, starting d years from now.
+
+# present value of the ART costs averted by one additional circumcision, at the
+# discount rate r (the same formula as tx.savings, with r as an argument)
+artSaved <- function(costs, r) {
+  d <- costs[["years_to_art"]]; L <- costs[["years_on_art"]]
+  annuity <- if (r == 0) L else (1 + r)^(-d) * (1 - (1 + r)^(-L)) / r
+  costs[["art_cost_per_year"]] * annuity / costs[["mmc_per_infection_averted"]]
+}
+
+## function to return the budget view of every policy
+## INSTRUCTIONS
+# 1) total_cost, transfers, uptake_change: per uncircumcised man, one value per
+#    policy (from RunCBA, or from a mixed logit)
+# 2) costs: the cost inputs (a named vector, as in model$costs)
+# returns, per policy: the cost per additional circumcision; the ART costs
+# averted per dollar spent; the net budget saving; the undiscounted payback
+# period (years after the circumcision); the internal rate of return, the
+# discount rate at which the ART costs averted just repay the cost; and the
+# share of averted infections that must otherwise have been treated for the
+# policy to pay for itself
+budgetView <- function(total_cost, transfers, uptake_change, costs) {
+  if (is.matrix(costs)) costs <- costs[1, ]
+  costs <- unlist(costs)
+  r <- costs[["discount_rate"]]
+  per_mmc <- total_cost / uptake_change                       # cost per additional circumcision
+  b_tx <- artSaved(costs, r)
+  per_year <- costs[["art_cost_per_year"]] / costs[["mmc_per_infection_averted"]]
+  irr <- vapply(per_mmc, function(c) {
+    f <- function(rho) artSaved(costs, rho) - c
+    if (f(1e-9) <= 0) return(NA_real_)                         # never repaid, even undiscounted
+    uniroot(f, c(1e-9, 50), tol = 1e-10)$root
+  }, numeric(1))
+  payback <- costs[["years_to_art"]] + per_mmc / per_year
+  payback[per_mmc / per_year > costs[["years_on_art"]]] <- NA
+  data.frame(total_cost = total_cost, transfers = transfers, uptake_change = uptake_change,
+             cost_per_extra_mmc = per_mmc, art_saved = uptake_change * b_tx,
+             return_per_dollar = b_tx / per_mmc, net_saving = uptake_change * b_tx - total_cost,
+             payback_years = payback, irr = irr, coverage_needed = per_mmc / b_tx, row.names = NULL)
+}
+
+# the net budget saving per uncircumcised man when the ART costs averted are
+# discounted at the budget's own rate rho instead of r
+budgetSaving <- function(total_cost, uptake_change, costs, rho) {
+  if (is.matrix(costs)) costs <- costs[1, ]
+  costs <- unlist(costs)
+  uptake_change * artSaved(costs, rho) - total_cost
+}
+
+
 ### one way sensitivity analyses
 
 # net benefit of each policy with one cost input at its low or high value

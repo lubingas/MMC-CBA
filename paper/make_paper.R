@@ -352,7 +352,64 @@ mac("MXmedFiveMin", dol(min(med5))); mac("MXmedFiveMax", dol(max(med5)))
 popdiff <- abs(fx$population_cv_mean / fx$cv_mean - 1)    # fx rows are policies 1 to 5
 mac("MXpopDiff", pct(max(popdiff)))
 mac("MXpopDiffOne", pct(popdiff[1])); mac("MXpopDiffTwo", pct(popdiff[2])); mac("MXpopDiffRest", pct(max(popdiff[3:5])))
+
+
+### budget perspective (budget comes from main.R)
+f1 <- function(x) formatC(x, format = "f", digits = 1)
+mac("BreturnMin", f1(min(budget$return_per_dollar))); mac("BreturnMax", f1(max(budget$return_per_dollar)))
+mac("BreturnLoMin", f1(min(budget$return_lo)))
+mac("BirrMin", pct(min(budget$irr))); mac("BirrMax", pct(max(budget$irr)))
+mac("BpaybackMin", f1(min(budget$payback_years))); mac("BpaybackMax", f1(max(budget$payback_years)))
+mac("BcoverMin", pct(min(budget$coverage_needed))); mac("BcoverMax", pct(max(budget$coverage_needed)))
+mac("BpSavingMin", pct(min(budget$p_saving)))
+mac("BartPerYear", usd(base_case$costs[["art_cost_per_year"]] / base_case$costs[["mmc_per_infection_averted"]], 0))
+for (i in seq_along(ids)) {
+  w <- paste0("BP", c("One", "Two", "Three", "Four", "Five")[i]); b <- budget[budget$policy == ids[i], ]
+  mac(paste0(w, "PerMMC"), usd(b$cost_per_extra_mmc, 0)); mac(paste0(w, "Return"), f1(b$return_per_dollar))
+  mac(paste0(w, "IRR"), pct(b$irr)); mac(paste0(w, "Payback"), f1(b$payback_years))
+  mac(paste0(w, "Saving"), usd(b$net_saving)); mac(paste0(w, "PerThousand"), formatC(1000 * b$uptake_change, format = "f", digits = 0))
+}
+# the mixed logit with a fixed price coefficient: lower uptake, the same arithmetic
+bmx <- budgetView(fx$total_cost, fx$transfers, fx$uptake_change, base_case$costs)
+mac("BMXperMMCmin", usd(min(bmx$cost_per_extra_mmc), 0)); mac("BMXperMMCmax", usd(max(bmx$cost_per_extra_mmc), 0))
+mac("BMXreturnMin", f1(min(bmx$return_per_dollar))); mac("BMXreturnMax", f1(max(bmx$return_per_dollar)))
+mac("BMXirrMin", pct(min(bmx$irr))); mac("BMXirrMax", pct(max(bmx$irr)))
 writeLines(sprintf("\\newcommand{\\mmc%s}{%s}", names(macros), unlist(macros)), "paper/numbers.tex")
+
+bud_rows <- lapply(seq_along(ids), function(i) {
+  b <- budget[budget$policy == ids[i], ]
+  c(esc(pol$label[i + 1]), usd(b$total_cost), formatC(1000 * b$uptake_change, format = "f", digits = 0),
+    usd(b$cost_per_extra_mmc, 0), paste0("\\makecell{", f1(b$return_per_dollar), "\\\\(", f1(b$return_lo), ", ", f1(b$return_hi), ")}"),
+    f1(b$payback_years), pct(b$irr), pct(b$coverage_needed), pct(b$p_saving))
+})
+write.tab("tab_budget.tex",
+          c("Policy", "\\makecell{Cost now\\\\per man}", "\\makecell{Additional\\\\MMC per\\\\1,000 men}", "\\makecell{Cost per\\\\additional\\\\MMC}",
+            "\\makecell{ART costs\\\\averted per\\\\dollar (95\\% CI)}", "\\makecell{Payback\\\\(years)}", "\\makecell{Internal\\\\rate of\\\\return}",
+            "\\makecell{ART coverage\\\\needed to\\\\break even}", "\\makecell{P(saves\\\\money)}"),
+          bud_rows, ">{\\raggedright\\arraybackslash}p{3.0cm}rrrcrrrr")
+
+# ART costs averted per dollar spent now, by the discount rate the budget applies to them
+rho <- seq(0, 0.35, by = 0.0025)
+bfig <- do.call(rbind, lapply(seq_along(ids), function(i) {
+  b <- budget[budget$policy == ids[i], ]
+  data.frame(policy = factor(pol$label[i + 1], levels = pol$label[-1]), rho = rho,
+             ratio = sapply(rho, function(r) artSaved(unlist(base_case$costs), r)) / b$cost_per_extra_mmc)
+}))
+birr <- data.frame(policy = factor(pol$label[-1], levels = pol$label[-1]), irr = budget$irr[match(ids, budget$policy)])
+gb <- ggplot(bfig, aes(x = rho, y = ratio, colour = policy)) +
+  geom_hline(yintercept = 1, colour = "grey30", linewidth = 0.4) +
+  geom_vline(xintercept = base_case$costs[["discount_rate"]], colour = "grey50", linetype = "dashed", linewidth = 0.4) +
+  geom_line(linewidth = 0.8) +
+  geom_point(data = birr, aes(x = irr, y = 1), size = 2) +
+  annotate("text", x = base_case$costs[["discount_rate"]] + 0.004, y = 0.32, label = "base case, 3%", hjust = 0, size = 2.8,
+           family = fam, colour = "grey30") +
+  scale_colour_manual(values = unname(okabe[c("blue", "orange", "green", "vermillion", "purple")]), name = NULL) +
+  scale_x_continuous(labels = label_percent(), breaks = seq(0, 0.35, 0.05)) +
+  scale_y_log10(breaks = c(0.25, 0.5, 1, 2, 5, 10, 20), labels = function(x) paste0("$", x)) +
+  guides(colour = guide_legend(ncol = 2)) +
+  labs(x = "Discount rate applied to the ART costs averted", y = "ART costs averted per dollar spent now (log scale)") +
+  theme_paper + theme(panel.grid.major.y = element_line(colour = "grey92"))
+save_pdf(gb, "fig_budget.pdf", 6.4, 3.8)
 
 # tables
 mlabel <- function(m) {
