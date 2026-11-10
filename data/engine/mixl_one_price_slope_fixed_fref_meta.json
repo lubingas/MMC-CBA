@@ -1,0 +1,142 @@
+{
+  "format": "mmc-engine-export/1",
+  "model": "mixl_one_price_slope_fixed",
+  "spec_id": "uncorr__onefixed__fref",
+  "spec_name": "Uncorrelated mixed logit, one price coefficient, fixed, fielded-reference coding",
+  "spec_hash": "7df49691d98ce03378712f0d5b3b53ab",
+  "code_hash": "8af1f016505b60f7261e83b7d199af16",
+  "family": "mixed logit",
+  "structure": "uncorrelated",
+  "coding": "fielded_ref",
+  "coding_note": "fielded-reference: days - 5; voucher and cash amounts + 8 on the service options; opt-out row 0",
+  "utility": "one_price",
+  "utility_note": "one price coefficient: x_price = pricenone + pricevoucher + pricecash on the model's coding",
+  "price_form": "onefixed",
+  "parameters": ["neither", "permhc", "dist5", "dist15", "avail", "somepriv", "notpriv", "device", "voucher", "cash", "price", "sd_neither", "sd_permhc", "sd_dist5", "sd_dist15", "sd_avail", "sd_somepriv", "sd_notpriv", "sd_device", "sd_voucher", "sd_cash"],
+  "engine_parameters": ["neither", "permhc", "distance5", "distance15", "available", "someprivate", "notprivate", "device", "voucher", "cash", "pricenone", "sd_neither", "sd_permhc", "sd_distance5", "sd_distance15", "sd_available", "sd_someprivate", "sd_notprivate", "sd_device", "sd_voucher", "sd_cash"],
+  "coefficients": [
+    {
+      "name": "neither",
+      "engine": "neither",
+      "distribution": "normal",
+      "mean_parameter": "neither",
+      "sd_parameter": "sd_neither",
+      "draw_column": 1
+    },
+    {
+      "name": "permhc",
+      "engine": "permhc",
+      "distribution": "normal",
+      "mean_parameter": "permhc",
+      "sd_parameter": "sd_permhc",
+      "draw_column": 2
+    },
+    {
+      "name": "dist5",
+      "engine": "distance5",
+      "distribution": "normal",
+      "mean_parameter": "dist5",
+      "sd_parameter": "sd_dist5",
+      "draw_column": 3
+    },
+    {
+      "name": "dist15",
+      "engine": "distance15",
+      "distribution": "normal",
+      "mean_parameter": "dist15",
+      "sd_parameter": "sd_dist15",
+      "draw_column": 4
+    },
+    {
+      "name": "avail",
+      "engine": "available",
+      "distribution": "normal",
+      "mean_parameter": "avail",
+      "sd_parameter": "sd_avail",
+      "draw_column": 5
+    },
+    {
+      "name": "somepriv",
+      "engine": "someprivate",
+      "distribution": "normal",
+      "mean_parameter": "somepriv",
+      "sd_parameter": "sd_somepriv",
+      "draw_column": 6
+    },
+    {
+      "name": "notpriv",
+      "engine": "notprivate",
+      "distribution": "normal",
+      "mean_parameter": "notpriv",
+      "sd_parameter": "sd_notpriv",
+      "draw_column": 7
+    },
+    {
+      "name": "device",
+      "engine": "device",
+      "distribution": "normal",
+      "mean_parameter": "device",
+      "sd_parameter": "sd_device",
+      "draw_column": 8
+    },
+    {
+      "name": "voucher",
+      "engine": "voucher",
+      "distribution": "normal",
+      "mean_parameter": "voucher",
+      "sd_parameter": "sd_voucher",
+      "draw_column": 9
+    },
+    {
+      "name": "cash",
+      "engine": "cash",
+      "distribution": "normal",
+      "mean_parameter": "cash",
+      "sd_parameter": "sd_cash",
+      "draw_column": 10
+    },
+    {
+      "name": "price",
+      "engine": "pricenone",
+      "distribution": "fixed",
+      "mean_parameter": "price",
+      "sd_parameter": null,
+      "draw_column": 11
+    }
+  ],
+  "transforms": ["beta = mean + sd * eta", "beta = mean", "beta = -exp(mean + sd * eta)", "beta = min(0, mean + sd * eta); smoothed in estimation by softplus, tau = 0.005"],
+  "draws": {
+    "type": "MLHS",
+    "construction": "make_draws(): column by column, men inside; column k belongs to coefficient k",
+    "seed": 1,
+    "R": 3000,
+    "columns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+    "fresh_seeds": [2, 3]
+  },
+  "fit": {
+    "fit_id": "postfit:signed09",
+    "source": "engine",
+    "start": "signed09",
+    "ll": -2724.51032734153,
+    "ll_fresh": {
+      "seed2": -2729.1336026648,
+      "seed3": -2727.20119073066
+    },
+    "ll_fresh_mean": -2728.16739669773,
+    "k": 21,
+    "n_obs": 4872,
+    "aic": 5491.02065468307,
+    "bic": 5627.33711068025,
+    "grad_max": 0.000616303695274212,
+    "hessian_pd": true,
+    "min_eigenvalue": 5.87637371152357,
+    "date": "2026-11-06 18:55:31 EST"
+  },
+  "engine": {
+    "version": "1.0.0",
+    "commit": "6b97374",
+    "r_version": "R version 4.5.3 (2026-03-11)",
+    "torch_version": "0.17.0"
+  },
+  "exported": "2026-11-07 08:26:08 EST"
+}

@@ -1,0 +1,145 @@
+{
+  "format": "mmc-engine-export/1",
+  "model": "cl_three_price_slopes",
+  "spec_id": "cl__fixed__fref",
+  "spec_name": "Conditional logit, fielded-reference coding",
+  "spec_hash": "8f715c0a7309eaacaa6b8bfbbf77c61d",
+  "code_hash": "0664a5a5de8b23ed84b3abeff94049a9",
+  "family": "conditional logit",
+  "structure": "fixed coefficients",
+  "coding": "fielded_ref",
+  "coding_note": "fielded-reference: days - 5; voucher and cash amounts + 8 on the service options; opt-out row 0",
+  "utility": "three_price",
+  "utility_note": "three price slopes: pricenone, pricevoucher, pricecash",
+  "price_form": "fixed",
+  "parameters": ["neither", "permhc", "dist5", "dist15", "avail", "somepriv", "notpriv", "device", "voucher", "cash", "pricenone", "pricevoucher", "pricecash"],
+  "engine_parameters": ["neither_C1", "permhc_C1", "distance5_C1", "distance15_C1", "available_C1", "someprivate_C1", "notprivate_C1", "device_C1", "voucher_C1", "cash_C1", "pricenone_C1", "pricevoucher_C1", "pricecash_C1"],
+  "coefficients": [
+    {
+      "name": "neither",
+      "engine": "neither",
+      "distribution": "fixed",
+      "mean_parameter": "neither",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "permhc",
+      "engine": "permhc",
+      "distribution": "fixed",
+      "mean_parameter": "permhc",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "dist5",
+      "engine": "distance5",
+      "distribution": "fixed",
+      "mean_parameter": "dist5",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "dist15",
+      "engine": "distance15",
+      "distribution": "fixed",
+      "mean_parameter": "dist15",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "avail",
+      "engine": "available",
+      "distribution": "fixed",
+      "mean_parameter": "avail",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "somepriv",
+      "engine": "someprivate",
+      "distribution": "fixed",
+      "mean_parameter": "somepriv",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "notpriv",
+      "engine": "notprivate",
+      "distribution": "fixed",
+      "mean_parameter": "notpriv",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "device",
+      "engine": "device",
+      "distribution": "fixed",
+      "mean_parameter": "device",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "voucher",
+      "engine": "voucher",
+      "distribution": "fixed",
+      "mean_parameter": "voucher",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "cash",
+      "engine": "cash",
+      "distribution": "fixed",
+      "mean_parameter": "cash",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "pricenone",
+      "engine": "pricenone",
+      "distribution": "fixed",
+      "mean_parameter": "pricenone",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "pricevoucher",
+      "engine": "pricevoucher",
+      "distribution": "fixed",
+      "mean_parameter": "pricevoucher",
+      "sd_parameter": null,
+      "draw_column": null
+    },
+    {
+      "name": "pricecash",
+      "engine": "pricecash",
+      "distribution": "fixed",
+      "mean_parameter": "pricecash",
+      "sd_parameter": null,
+      "draw_column": null
+    }
+  ],
+  "transforms": ["beta = mean + sd * eta", "beta = mean", "beta = -exp(mean + sd * eta)", "beta = min(0, mean + sd * eta); smoothed in estimation by softplus, tau = 0.005"],
+  "fit": {
+    "fit_id": "lc:best",
+    "source": "mmc_torch_lc.R",
+    "start": "best of starts",
+    "ll": -3703.08066123311,
+    "k": 13,
+    "n_obs": 4872,
+    "aic": 7432.16132246621,
+    "bic": 7516.54769998828,
+    "grad_max": 0.0002530532147067,
+    "hessian_pd": true,
+    "min_eigenvalue": null,
+    "date": "2026-10-21 23:50:16 EDT"
+  },
+  "engine": {
+    "version": "1.0.0",
+    "commit": "6b97374",
+    "r_version": null,
+    "torch_version": null
+  },
+  "exported": "2026-11-07 08:26:08 EST"
+}
